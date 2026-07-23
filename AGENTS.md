@@ -2,6 +2,16 @@
 
 This file provides guidance to agents when working with code in this repository.
 
+## Doc Maintenance
+
+**Keep this file current.** Whenever tooling, scripts, or stack configuration changes — e.g. adding a package, changing a `pnpm` script, adding a test framework, updating a tsconfig option — check whether any section of `AGENTS.md` is now stale and update it in the same commit/task. Common triggers:
+
+- `package.json` scripts added, renamed, or removed → update **Commands**
+- New dev dependency that affects workflow (linter, formatter, test runner, bundler) → update **Stack** and **Commands**
+- `tsconfig*.json` compiler option changes → update relevant **Key Patterns** bullets
+- Architecture changes (new files, new hooks, renamed components) → update **Architecture**
+- New project-wide conventions or patterns → add a **Key Patterns** bullet
+
 ## Stack
 
 React 19 + TypeScript 6 + Vite 8, styled with **Tailwind CSS v4** (via `@tailwindcss/vite` plugin — no `tailwind.config.js`) and formatted/linted with **oxfmt** / **oxlint**.
@@ -15,9 +25,11 @@ pnpm typecheck    # tsc -b --noEmit
 pnpm lint         # oxlint (react + typescript + oxc plugins)
 pnpm fmt          # oxfmt (auto-fix)
 pnpm fmt:check    # check formatting without writing
+pnpm test         # vitest run (single pass)
+pnpm test:watch   # vitest (watch mode)
 ```
 
-No test framework is set up — there are no tests.
+Tests use **Vitest** with `jsdom` environment. Import test APIs explicitly from `"vitest"` — e.g. `import { describe, it, expect } from "vitest"`. The validation gate is `pnpm fmt && pnpm typecheck && pnpm lint && pnpm test`.
 
 ## Import Order (enforced by oxfmt)
 
