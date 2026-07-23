@@ -1,0 +1,59 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 28px 24px;
+}
+
+.gameArea {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.boardColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+/* Responsive: stack on narrow screens */
+@media (max-width: 700px) {
+  .gameArea {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .boardColumn {
+    align-items: center;
+    width: 100%;
+  }
+
+  :root {
+    --board-size: min(96vw, 96vh, 420px);
+  }
+}
