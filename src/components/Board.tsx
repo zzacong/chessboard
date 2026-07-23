@@ -59,7 +59,7 @@ export function Board({
         {rankLabels.map((r) => (
           <span
             key={r}
-            className="flex items-center justify-center w-5 text-[11px] font-bold tracking-wide"
+            className="flex w-5 items-center justify-center text-[11px] font-bold tracking-wide"
             style={{ height: "var(--sq-size)", color: "var(--color-text-muted)" }}
           >
             {r}
@@ -116,12 +116,12 @@ export function Board({
                 onKeyDown={(e) => e.key === "Enter" && onSquareClick(sq)}
               >
                 {/* hover overlay */}
-                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-white/[0.12] pointer-events-none z-[4]" />
+                <span className="pointer-events-none absolute inset-0 z-[4] bg-white/[0.12] opacity-0 group-hover:opacity-100" />
 
                 {isLegal && <div className={isCapture ? "legal-ring" : "legal-dot"} />}
                 {PieceComp && (
                   <div
-                    className="relative z-[2] flex items-center justify-center pointer-events-none transition-transform duration-[120ms] ease-out group-hover:scale-[1.08]"
+                    className="pointer-events-none relative z-[2] flex items-center justify-center transition-transform duration-[120ms] ease-out group-hover:scale-[1.08]"
                     style={{
                       width: "88%",
                       height: "88%",
@@ -142,7 +142,7 @@ export function Board({
         </div>
 
         {/* File labels bottom */}
-        <div className="flex mt-1" style={{ width: "calc(var(--sq-size) * 8)" }}>
+        <div className="mt-1 flex" style={{ width: "calc(var(--sq-size) * 8)" }}>
           {fileLabels.map((f) => (
             <span
               key={f}

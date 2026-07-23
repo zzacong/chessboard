@@ -23,32 +23,32 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="flex min-h-screen items-center justify-center p-6"
       style={{ background: "var(--color-bg)" }}
     >
       <div
-        className="w-full max-w-[420px] text-center rounded-[20px] px-9 py-10"
+        className="w-full max-w-[420px] rounded-[20px] px-9 py-10 text-center"
         style={{
           background: "var(--color-surface)",
           border: "1px solid var(--color-border)",
           boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="text-[56px] leading-none mb-2">♟</div>
+        <div className="mb-2 text-[56px] leading-none">♟</div>
         <h1
-          className="text-[32px] font-bold tracking-tight mb-1"
+          className="mb-1 text-[32px] font-bold tracking-tight"
           style={{ color: "var(--color-text)" }}
         >
           Chess
         </h1>
-        <p className="text-sm mb-8" style={{ color: "var(--color-text-muted)" }}>
+        <p className="mb-8 text-sm" style={{ color: "var(--color-text-muted)" }}>
           Player vs Computer
         </p>
 
         {/* Play as */}
         <section className="mb-7 text-left">
           <h2
-            className="text-[11px] font-bold uppercase tracking-[0.08em] mb-2.5"
+            className="mb-2.5 text-[11px] font-bold tracking-[0.08em] uppercase"
             style={{ color: "var(--color-text-muted)" }}
           >
             Play as
@@ -57,7 +57,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
             {COLORS.map((c) => (
               <button
                 key={c.value}
-                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3.5 px-2.5 text-sm font-medium rounded-xl border-2 transition-[border-color,background] duration-150${
+                className={`flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 text-sm font-medium transition-[border-color,background] duration-150${
                   color === c.value ? " text-white" : ""
                 }`}
                 style={
@@ -85,7 +85,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
         {/* Difficulty */}
         <section className="mb-7 text-left">
           <h2
-            className="text-[11px] font-bold uppercase tracking-[0.08em] mb-2.5"
+            className="mb-2.5 text-[11px] font-bold tracking-[0.08em] uppercase"
             style={{ color: "var(--color-text-muted)" }}
           >
             Difficulty
@@ -94,7 +94,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
             {DIFFICULTIES.map((d) => (
               <button
                 key={d.value}
-                className="flex-1 flex flex-col items-center justify-center gap-1 py-3.5 px-2.5 rounded-xl border-2 transition-[border-color,background] duration-150"
+                className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 transition-[border-color,background] duration-150"
                 style={
                   difficulty === d.value
                     ? {
@@ -120,7 +120,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
         </section>
 
         <button
-          className="w-full py-3.5 rounded-xl text-base font-bold tracking-wide text-white mt-1 transition-[opacity,transform] duration-150 hover:opacity-90 active:scale-[0.98]"
+          className="mt-1 w-full rounded-xl py-3.5 text-base font-bold tracking-wide text-white transition-[opacity,transform] duration-150 hover:opacity-90 active:scale-[0.98]"
           style={{ background: "var(--color-accent)", border: "none" }}
           onClick={() => onStart(color, difficulty)}
         >

@@ -70,27 +70,27 @@ export function StatusBar({
 
   return (
     <div
-      className="flex items-center justify-between gap-4 rounded-xl px-4 py-2.5 w-full"
+      className="flex w-full items-center justify-between gap-4 rounded-xl px-4 py-2.5"
       style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}
     >
-      <div className="flex items-center gap-2.5 min-w-0">
+      <div className="flex min-w-0 items-center gap-2.5">
         <span
-          className={`w-2 h-2 rounded-full shrink-0${blink ? " animate-blink" : ""}`}
+          className={`h-2 w-2 rounded-full shrink-0${blink ? " animate-blink" : ""}`}
           style={{ background: indicatorColor[msg.type] }}
         />
         <span
-          className="text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis"
+          className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap"
           style={{ color: messageColor[msg.type] }}
         >
           {msg.text}
         </span>
       </div>
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex shrink-0 items-center gap-3">
         <span className="text-xs whitespace-nowrap" style={{ color: "var(--color-text-muted)" }}>
           {playerColor === "w" ? "♔ White" : "♚ Black"} · {DIFFICULTY_LABELS[difficulty]}
         </span>
         <button
-          className={`px-4 py-1.5 text-[13px] font-semibold rounded-lg whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5${
+          className={`rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5${
             isOver ? " animate-pulse-border" : ""
           }`}
           style={

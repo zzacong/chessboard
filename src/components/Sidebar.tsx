@@ -48,11 +48,11 @@ function CapturedRow({
 }) {
   const sorted = sortedCaptured(pieces);
   return (
-    <div className="flex items-center gap-1.5 mb-1.5">
-      <span className="text-[11px] w-7 shrink-0" style={{ color: "var(--color-text-muted)" }}>
+    <div className="mb-1.5 flex items-center gap-1.5">
+      <span className="w-7 shrink-0 text-[11px]" style={{ color: "var(--color-text-muted)" }}>
         {label}
       </span>
-      <div className="flex flex-wrap gap-px items-center">
+      <div className="flex flex-wrap items-center gap-px">
         {sorted.map((p, i) => {
           const Comp = getPieceComponent(color, p);
           return Comp ? <Comp key={i} size={22} /> : null;
@@ -94,7 +94,7 @@ export function Sidebar({
   const diff = playerScore - computerScore;
 
   return (
-    <div className="flex flex-col gap-4 w-[220px] min-w-[180px]">
+    <div className="flex w-[220px] min-w-[180px] flex-col gap-4">
       {/* Captured pieces */}
       <section className="rounded-[10px] px-3.5 pt-3.5 pb-3" style={sectionStyle}>
         <h3 className={sectionTitleClass} style={{ color: "var(--color-text-muted)" }}>
@@ -104,7 +104,7 @@ export function Sidebar({
         <CapturedRow pieces={capturedPieces[computerColor]} color={playerColor} label="CPU" />
         {diff !== 0 && (
           <div
-            className="text-xs font-semibold mt-1 text-right"
+            className="mt-1 text-right text-xs font-semibold"
             style={{ color: "var(--color-accent-2)" }}
           >
             {diff > 0 ? `+${diff}` : diff} material
@@ -114,14 +114,14 @@ export function Sidebar({
 
       {/* Move history */}
       <section
-        className="flex-1 flex flex-col overflow-hidden rounded-[10px] px-3.5 pt-3.5 pb-3"
+        className="flex flex-1 flex-col overflow-hidden rounded-[10px] px-3.5 pt-3.5 pb-3"
         style={sectionStyle}
       >
         <h3 className={sectionTitleClass} style={{ color: "var(--color-text-muted)" }}>
           Moves
         </h3>
         <div
-          className="overflow-y-auto max-h-[380px] flex flex-col gap-0.5"
+          className="flex max-h-[380px] flex-col gap-0.5 overflow-y-auto"
           style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-border) transparent" }}
         >
           {paired.length === 0 && (
@@ -132,24 +132,24 @@ export function Sidebar({
           {paired.map(([white, black], idx) => (
             <div
               key={idx}
-              className={`grid gap-0.5 items-center px-1 py-0.5 rounded text-[13px]${idx === paired.length - 1 ? " bg-white/5" : ""}`}
+              className={`grid items-center gap-0.5 rounded px-1 py-0.5 text-[13px]${idx === paired.length - 1 ? " bg-white/5" : ""}`}
               style={{ gridTemplateColumns: "28px 1fr 1fr" }}
             >
               <span
-                className="text-[11px] text-right pr-1"
+                className="pr-1 text-right text-[11px]"
                 style={{ color: "var(--color-text-muted)" }}
               >
                 {idx + 1}.
               </span>
               <span
-                className="px-1.5 py-0.5 rounded-[3px] font-mono text-[13px]"
+                className="rounded-[3px] px-1.5 py-0.5 font-mono text-[13px]"
                 style={{ color: "#f0d9b5" }}
               >
                 {white}
               </span>
               {black && (
                 <span
-                  className="px-1.5 py-0.5 rounded-[3px] font-mono text-[13px]"
+                  className="rounded-[3px] px-1.5 py-0.5 font-mono text-[13px]"
                   style={{ color: "#b58863" }}
                 >
                   {black}
@@ -160,7 +160,7 @@ export function Sidebar({
           {isComputerThinking && (
             <div className="px-1 py-1">
               <span
-                className="text-xs italic animate-pulse-opacity"
+                className="animate-pulse-opacity text-xs italic"
                 style={{ color: "var(--color-text-muted)" }}
               >
                 CPU thinking…

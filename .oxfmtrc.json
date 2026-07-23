@@ -11,5 +11,10 @@
       ["value-parent", "value-sibling", "value-index"],
       "unknown"
     ]
+  },
+  "sortTailwindcss": {
+    "stylesheet": "./src/index.css",
+    "functions": ["clsx", "cn"],
+    "preserveWhitespace": true
   }
 }

@@ -42,7 +42,7 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className="flex min-h-screen flex-col"
       style={{
         background: "var(--color-bg)",
         backgroundImage:
@@ -50,25 +50,25 @@ export default function App() {
       }}
     >
       <header
-        className="flex items-center justify-between px-6 h-[52px] sticky top-0 z-10 backdrop-blur-sm"
+        className="sticky top-0 z-10 flex h-[52px] items-center justify-between px-6 backdrop-blur-sm"
         style={{ borderBottom: "1px solid var(--color-border)", background: "rgba(22,33,62,0.8)" }}
       >
         <span
-          className="text-[17px] font-bold tracking-tight flex items-center gap-2"
+          className="flex items-center gap-2 text-[17px] font-bold tracking-tight"
           style={{ color: "var(--color-text)" }}
         >
           {/* accent dot */}
           <span
-            className="inline-block w-2 h-2 rounded-full"
+            className="inline-block h-2 w-2 rounded-full"
             style={{ background: "var(--color-accent)", boxShadow: "0 0 8px var(--color-accent)" }}
           />
           Chess
         </span>
       </header>
 
-      <main className="flex-1 flex items-start justify-center px-5 pt-7 pb-10">
-        <div className="flex items-start gap-5 max-sm:flex-col max-sm:items-center max-sm:w-full">
-          <div className="flex flex-col gap-3 items-start max-sm:items-center max-sm:w-full">
+      <main className="flex flex-1 items-start justify-center px-5 pt-7 pb-10">
+        <div className="flex items-start gap-5 max-sm:w-full max-sm:flex-col max-sm:items-center">
+          <div className="flex flex-col items-start gap-3 max-sm:w-full max-sm:items-center">
             <StatusBar
               status={status}
               turn={turn}
