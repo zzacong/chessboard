@@ -1,3 +1,4 @@
+import React from 'react'
 import type { PieceColor, PieceType } from '../../types'
 
 // ── Individual piece SVG components ──────────────────────────────────────────
@@ -193,7 +194,7 @@ export function BPawn({ size = 45 }: PieceProps) {
 }
 
 // ── Lookup map ────────────────────────────────────────────────────────────────
-type PieceComponent = (props: PieceProps) => JSX.Element
+type PieceComponent = (props: PieceProps) => React.JSX.Element
 
 export const PIECE_COMPONENTS: Record<string, PieceComponent> = {
   wk: WKing,
