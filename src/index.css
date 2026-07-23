@@ -1,0 +1,42 @@
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Tokens ── */
+:root {
+  --color-bg:          #1a1a2e;
+  --color-surface:     #16213e;
+  --color-surface-2:   #0f3460;
+  --color-border:      #2a2a4a;
+  --color-text:        #e0e0e0;
+  --color-text-muted:  #8888aa;
+  --color-accent:      #e94560;
+  --color-accent-2:    #f5a623;
+
+  /* Board */
+  --sq-light:          #f0d9b5;
+  --sq-dark:           #b58863;
+  --sq-selected:       #f6f669;
+  --sq-last-move:      #cdd16e;
+  --sq-legal-dot:      rgba(0,0,0,0.20);
+  --sq-legal-ring:     rgba(0,0,0,0.40);
+  --sq-check:          #e84040;
+
+  --board-size:        min(90vw, 90vh, 560px);
+  --sq-size:           calc(var(--board-size) / 8);
+
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+body {
+  background: var(--color-bg);
+  min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
