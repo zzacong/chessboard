@@ -25,14 +25,14 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `pnpm dev` | Start development server |
-| `pnpm build` | Type-check and build for production |
-| `pnpm preview` | Preview the production build locally |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm lint` | Lint with oxlint |
-| `pnpm fmt` | Format with oxfmt |
+| Command          | Description                          |
+| ---------------- | ------------------------------------ |
+| `pnpm dev`       | Start development server             |
+| `pnpm build`     | Type-check and build for production  |
+| `pnpm preview`   | Preview the production build locally |
+| `pnpm typecheck` | Run TypeScript type checking         |
+| `pnpm lint`      | Lint with oxlint                     |
+| `pnpm fmt`       | Format with oxfmt                    |
 
 ## Tech Stack
 
@@ -74,7 +74,7 @@ When the player makes a move, the hook posts a `{ fen, depth, id }` message to a
 Difficulty maps directly to search depth:
 
 | Difficulty | Minimax depth |
-|---|---|
-| Easy | 1 |
-| Medium | 3 |
-| Hard | 5 |
+| ---------- | ------------- |
+| Easy       | 1             |
+| Medium     | 3             |
+| Hard       | 5             |
