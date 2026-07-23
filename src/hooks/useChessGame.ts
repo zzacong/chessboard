@@ -75,7 +75,10 @@ export function useChessGame(): UseChessGameReturn {
   const [lastMove, setLastMove] = useState<LastMove | null>(null);
   const [status, setStatus] = useState<GameStatus>("playing");
   const [history, setHistory] = useState<string[]>([]);
-  const [capturedPieces, setCapturedPieces] = useState<CapturedPieces>({ w: [], b: [] });
+  const [capturedPieces, setCapturedPieces] = useState<CapturedPieces>({
+    w: [],
+    b: [],
+  });
   const [playerColor, setPlayerColor] = useState<PieceColor>("w");
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const [difficultyBlack, setDifficultyBlack] = useState<Difficulty>("medium");
@@ -133,7 +136,11 @@ export function useChessGame(): UseChessGameReturn {
         setTimeout(() => {
           if (nextId !== pendingMsgId.current) return; // guard against reset during delay
           setIsComputerThinking(true);
-          worker.postMessage({ fen: g.fen(), depth: DEPTH_MAP[nextDiff], id: nextId });
+          worker.postMessage({
+            fen: g.fen(),
+            depth: DEPTH_MAP[nextDiff],
+            id: nextId,
+          });
         }, 150);
       }
     };
@@ -181,7 +188,11 @@ export function useChessGame(): UseChessGameReturn {
 
       // If a square is already selected and we're clicking a legal destination
       if (selectedSquare && legalMoveSquares.includes(sq)) {
-        const moveResult = g.move({ from: selectedSquare, to: sq, promotion: "q" });
+        const moveResult = g.move({
+          from: selectedSquare,
+          to: sq,
+          promotion: "q",
+        });
         if (moveResult) {
           setLastMove({ from: selectedSquare, to: sq });
           setSelectedSquare(null);

@@ -123,7 +123,10 @@ export function Sidebar({
         </h3>
         <div
           className="flex max-h-[380px] flex-col gap-0.5 overflow-y-auto"
-          style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-border) transparent" }}
+          style={{
+            scrollbarWidth: "thin",
+            scrollbarColor: "var(--color-border) transparent",
+          }}
         >
           {paired.length === 0 && (
             <span className="text-xs opacity-50" style={{ color: "var(--color-text-muted)" }}>

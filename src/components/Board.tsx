@@ -61,7 +61,10 @@ export function Board({
           <span
             key={r}
             className="flex w-5 items-center justify-center text-[11px] font-bold tracking-wide"
-            style={{ height: "var(--sq-size)", color: "var(--color-text-muted)" }}
+            style={{
+              height: "var(--sq-size)",
+              color: "var(--color-text-muted)",
+            }}
           >
             {r}
           </span>
@@ -145,7 +148,10 @@ export function Board({
             <span
               key={f}
               className="flex items-center justify-center text-[11px] font-bold tracking-[0.04em]"
-              style={{ width: "var(--sq-size)", color: "var(--color-text-muted)" }}
+              style={{
+                width: "var(--sq-size)",
+                color: "var(--color-text-muted)",
+              }}
             >
               {f}
             </span>

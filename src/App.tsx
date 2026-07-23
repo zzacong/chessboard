@@ -55,7 +55,10 @@ export default function App() {
     >
       <header
         className="sticky top-0 z-10 flex h-[52px] items-center justify-between px-6 backdrop-blur-sm"
-        style={{ borderBottom: "1px solid var(--color-border)", background: "rgba(22,33,62,0.8)" }}
+        style={{
+          borderBottom: "1px solid var(--color-border)",
+          background: "rgba(22,33,62,0.8)",
+        }}
       >
         <span
           className="flex items-center gap-2 text-[17px] font-bold tracking-tight"
@@ -64,7 +67,10 @@ export default function App() {
           {/* accent dot */}
           <span
             className="inline-block h-2 w-2 rounded-full"
-            style={{ background: "var(--color-accent)", boxShadow: "0 0 8px var(--color-accent)" }}
+            style={{
+              background: "var(--color-accent)",
+              boxShadow: "0 0 8px var(--color-accent)",
+            }}
           />
           Chess
         </span>

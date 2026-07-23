@@ -122,7 +122,10 @@ export function StatusBar({
   return (
     <div
       className="flex w-full items-center justify-between gap-4 rounded-xl px-4 py-2.5"
-      style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}
+      style={{
+        background: "var(--color-surface)",
+        border: "1px solid var(--color-border)",
+      }}
     >
       <div className="flex min-w-0 items-center gap-2.5">
         <span
