@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import type { Difficulty, PieceColor } from "../types";
 
 interface SetupScreenProps {

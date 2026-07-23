@@ -1,6 +1,9 @@
 import type { Square } from "chess.js";
+
 import { Chess } from "chess.js";
+
 import type { LastMove, PieceColor } from "../types";
+
 import { getPieceComponent } from "./pieces";
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;

@@ -1,4 +1,5 @@
 import React from "react";
+
 import type { PieceColor, PieceType } from "../../types";
 
 // ── Individual piece SVG components ──────────────────────────────────────────

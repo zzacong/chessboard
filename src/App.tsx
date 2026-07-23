@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useChessGame } from "./hooks/useChessGame";
-import { SetupScreen } from "./components/SetupScreen";
+
+import type { Difficulty, PieceColor } from "./types";
+
 import { Board } from "./components/Board";
+import { SetupScreen } from "./components/SetupScreen";
 import { Sidebar } from "./components/Sidebar";
 import { StatusBar } from "./components/StatusBar";
-import type { Difficulty, PieceColor } from "./types";
+import { useChessGame } from "./hooks/useChessGame";
 
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);

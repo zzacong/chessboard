@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
+
 import type { CapturedPieces, PieceColor, PieceType } from "../types";
+
 import { getPieceComponent } from "./pieces";
 
 interface SidebarProps {

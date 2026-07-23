@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Chess } from "chess.js";
 import type { Square } from "chess.js";
+
+import { Chess } from "chess.js";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import type {
   CapturedPieces,
   Difficulty,
@@ -9,6 +11,7 @@ import type {
   PieceColor,
   PieceType,
 } from "../types";
+
 import { DEPTH_MAP } from "../types";
 
 interface UseChessGameReturn {
