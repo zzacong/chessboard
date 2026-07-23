@@ -42,7 +42,7 @@ export default function App() {
   return (
     <div className={styles.app}>
       <header className={styles.header}>
-        <span className={styles.logo}>♟ Chess</span>
+        <span className={styles.logo}>Chess</span>
       </header>
 
       <main className={styles.main}>

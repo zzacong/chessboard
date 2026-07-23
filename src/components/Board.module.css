@@ -18,8 +18,10 @@
   display: grid;
   grid-template-columns: repeat(8, var(--sq-size));
   grid-template-rows: repeat(8, var(--sq-size));
-  border: 2px solid #5a3e1b;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+  border: 3px solid #3a2510;
+  border-radius: 3px;
+  box-shadow: var(--shadow-board);
+  overflow: hidden;
 }
 
 .square {
@@ -30,23 +32,30 @@
   justify-content: center;
   position: relative;
   cursor: pointer;
-  transition: filter 0.1s;
 }
 
 .square:focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: -3px;
-  z-index: 2;
+  z-index: 5;
 }
 
-.light {
-  background-color: var(--sq-light);
+/* ── Square colours ── */
+.light { background-color: var(--sq-light); }
+.dark  { background-color: var(--sq-dark); }
+
+/* ── Hover overlay ── */
+.light:hover::after,
+.dark:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.12);
+  pointer-events: none;
+  z-index: 4;
 }
 
-.dark {
-  background-color: var(--sq-dark);
-}
-
+/* ── Highlights ── */
 .selected {
   background-color: var(--sq-selected) !important;
 }
@@ -59,48 +68,60 @@
   background-color: var(--sq-check) !important;
 }
 
-/* Legal move dot (empty square) */
+/* ── Legal move indicators ── */
 .legalDot {
   position: absolute;
-  width: 30%;
-  height: 30%;
+  width: 32%;
+  height: 32%;
   border-radius: 50%;
   background: var(--sq-legal-dot);
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
+  transform: scale(0.8);
+  animation: popIn 0.12s ease forwards;
 }
 
-/* Legal capture ring */
 .legalRing {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 4px var(--sq-legal-ring);
+  box-shadow: inset 0 0 0 5px var(--sq-legal-capture);
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
+  animation: popIn 0.12s ease forwards;
 }
 
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Piece ── */
 .piece {
   position: relative;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 90%;
-  height: 90%;
-  transition: transform 0.1s ease;
+  width: 88%;
+  height: 88%;
+  transition: transform 0.12s ease;
+  pointer-events: none;
 }
 
 .square:hover .piece {
-  transform: scale(1.06);
+  transform: scale(1.08);
 }
 
-/* Rank labels */
+.selected .piece {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+}
+
+/* ── Coordinate labels ── */
 .rankLabels {
   display: flex;
   flex-direction: column;
   height: calc(var(--sq-size) * 8);
-  padding-top: 0;
 }
 
 .rankLabels .label {
@@ -108,17 +129,17 @@
   align-items: center;
   justify-content: center;
   height: var(--sq-size);
-  width: 18px;
+  width: 20px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-muted);
+  letter-spacing: 0.02em;
 }
 
-/* File labels */
 .fileLabels {
   display: flex;
   width: calc(var(--sq-size) * 8);
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .fileLabels .label {
@@ -127,6 +148,7 @@
   justify-content: center;
   width: var(--sq-size);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-muted);
+  letter-spacing: 0.04em;
 }
