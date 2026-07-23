@@ -2,31 +2,31 @@
 
 /* ── Design tokens (still used by Board squares & keyframes) ── */
 :root {
-  --color-bg:          #0d0d1a;
-  --color-surface:     #16213e;
-  --color-surface-2:   #1e2d52;
-  --color-border:      #2a2a4a;
-  --color-border-2:    #3a3a5a;
-  --color-text:        #e8e8f0;
-  --color-text-muted:  #7878a0;
-  --color-accent:      #e94560;
-  --color-accent-2:    #f5a623;
-  --color-success:     #4ade80;
+  --color-bg: #0d0d1a;
+  --color-surface: #16213e;
+  --color-surface-2: #1e2d52;
+  --color-border: #2a2a4a;
+  --color-border-2: #3a3a5a;
+  --color-text: #e8e8f0;
+  --color-text-muted: #7878a0;
+  --color-accent: #e94560;
+  --color-accent-2: #f5a623;
+  --color-success: #4ade80;
 
   /* Board squares */
-  --sq-light:          #f0d9b5;
-  --sq-dark:           #b58863;
-  --sq-selected:       #f6f669cc;
-  --sq-last-move:      #cdd16e99;
-  --sq-legal-dot:      rgba(0, 0, 0, 0.22);
-  --sq-legal-capture:  rgba(0, 0, 0, 0.38);
-  --sq-check:          rgba(232, 64, 64, 0.85);
+  --sq-light: #f0d9b5;
+  --sq-dark: #b58863;
+  --sq-selected: #f6f669cc;
+  --sq-last-move: #cdd16e99;
+  --sq-legal-dot: rgba(0, 0, 0, 0.22);
+  --sq-legal-capture: rgba(0, 0, 0, 0.38);
+  --sq-check: rgba(232, 64, 64, 0.85);
 
   /* Sizing */
-  --board-size:        min(88vw, 80vh, 560px);
-  --sq-size:           calc(var(--board-size) / 8);
+  --board-size: min(88vw, 80vh, 560px);
+  --sq-size: calc(var(--board-size) / 8);
 
-  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   color: var(--color-text);
@@ -35,22 +35,44 @@
 }
 
 @media (max-width: 740px) {
-  :root { --board-size: min(95vw, 480px); }
+  :root {
+    --board-size: min(95vw, 480px);
+  }
 }
 
 @media (max-width: 480px) {
-  :root { --board-size: min(96vw, 400px); }
+  :root {
+    --board-size: min(96vw, 400px);
+  }
 }
 
-html, body { height: 100%; background: var(--color-bg); }
-#root { min-height: 100%; }
-button { cursor: pointer; font-family: inherit; }
+html,
+body {
+  height: 100%;
+  background: var(--color-bg);
+}
+#root {
+  min-height: 100%;
+}
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-border-2); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
 
 /* ── Focus outline ── */
 :focus-visible {
@@ -59,17 +81,27 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 /* ── Board square classes (Tailwind can't express these dynamic CSS-var values) ── */
-.sq-light { background-color: var(--sq-light); }
-.sq-dark  { background-color: var(--sq-dark); }
-.sq-selected { background-color: var(--sq-selected) !important; }
-.sq-last-move { background-color: var(--sq-last-move) !important; }
-.sq-in-check  { background-color: var(--sq-check) !important; }
+.sq-light {
+  background-color: var(--sq-light);
+}
+.sq-dark {
+  background-color: var(--sq-dark);
+}
+.sq-selected {
+  background-color: var(--sq-selected) !important;
+}
+.sq-last-move {
+  background-color: var(--sq-last-move) !important;
+}
+.sq-in-check {
+  background-color: var(--sq-check) !important;
+}
 
 .sq-hover::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   pointer-events: none;
   z-index: 4;
 }
@@ -95,25 +127,52 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 @keyframes popIn {
-  from { opacity: 0; transform: scale(0.7); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.2; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
 }
 
 @keyframes pulseBorder {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(233,69,96,0); }
-  50%       { box-shadow: 0 0 0 4px rgba(233,69,96,0.25); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(233, 69, 96, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(233, 69, 96, 0.25);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
-.animate-blink { animation: blink 0.8s ease-in-out infinite; }
-.animate-pulse-border { animation: pulseBorder 1.5s ease-in-out infinite; }
-.animate-pulse-opacity { animation: pulse 1.2s ease-in-out infinite; }
+.animate-blink {
+  animation: blink 0.8s ease-in-out infinite;
+}
+.animate-pulse-border {
+  animation: pulseBorder 1.5s ease-in-out infinite;
+}
+.animate-pulse-opacity {
+  animation: pulse 1.2s ease-in-out infinite;
+}

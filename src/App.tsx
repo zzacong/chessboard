@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import { useChessGame } from './hooks/useChessGame'
-import { SetupScreen } from './components/SetupScreen'
-import { Board } from './components/Board'
-import { Sidebar } from './components/Sidebar'
-import { StatusBar } from './components/StatusBar'
-import type { Difficulty, PieceColor } from './types'
+import { useState } from "react";
+import { useChessGame } from "./hooks/useChessGame";
+import { SetupScreen } from "./components/SetupScreen";
+import { Board } from "./components/Board";
+import { Sidebar } from "./components/Sidebar";
+import { StatusBar } from "./components/StatusBar";
+import type { Difficulty, PieceColor } from "./types";
 
 export default function App() {
-  const [gameStarted, setGameStarted] = useState(false)
+  const [gameStarted, setGameStarted] = useState(false);
 
   const {
     fen,
@@ -23,42 +23,42 @@ export default function App() {
     isComputerThinking,
     selectSquare,
     resetGame,
-  } = useChessGame()
+  } = useChessGame();
 
   function handleStart(color: PieceColor, diff: Difficulty) {
-    resetGame(color, diff)
-    setGameStarted(true)
+    resetGame(color, diff);
+    setGameStarted(true);
   }
 
   function handleNewGame() {
-    setGameStarted(false)
+    setGameStarted(false);
   }
 
   if (!gameStarted) {
-    return <SetupScreen onStart={handleStart} />
+    return <SetupScreen onStart={handleStart} />;
   }
 
   return (
     <div
       className="min-h-screen flex flex-col"
       style={{
-        background: 'var(--color-bg)',
+        background: "var(--color-bg)",
         backgroundImage:
-          'radial-gradient(ellipse 60% 50% at 20% 20%, rgba(30,45,82,0.4) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 80% 80%, rgba(233,69,96,0.06) 0%, transparent 60%)',
+          "radial-gradient(ellipse 60% 50% at 20% 20%, rgba(30,45,82,0.4) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 80% 80%, rgba(233,69,96,0.06) 0%, transparent 60%)",
       }}
     >
       <header
         className="flex items-center justify-between px-6 h-[52px] sticky top-0 z-10 backdrop-blur-sm"
-        style={{ borderBottom: '1px solid var(--color-border)', background: 'rgba(22,33,62,0.8)' }}
+        style={{ borderBottom: "1px solid var(--color-border)", background: "rgba(22,33,62,0.8)" }}
       >
         <span
           className="text-[17px] font-bold tracking-tight flex items-center gap-2"
-          style={{ color: 'var(--color-text)' }}
+          style={{ color: "var(--color-text)" }}
         >
           {/* accent dot */}
           <span
             className="inline-block w-2 h-2 rounded-full"
-            style={{ background: 'var(--color-accent)', boxShadow: '0 0 8px var(--color-accent)' }}
+            style={{ background: "var(--color-accent)", boxShadow: "0 0 8px var(--color-accent)" }}
           />
           Chess
         </span>
@@ -95,5 +95,5 @@ export default function App() {
         </div>
       </main>
     </div>
-  )
+  );
 }
