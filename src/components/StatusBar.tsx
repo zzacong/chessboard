@@ -1,4 +1,4 @@
-import type { Difficulty, GameStatus, PieceColor } from "../types";
+import type { Difficulty, GameMode, GameStatus, PieceColor } from "../types";
 
 import { cn } from "../lib/cn";
 
@@ -7,6 +7,7 @@ interface StatusBarProps {
   turn: PieceColor;
   playerColor: PieceColor;
   difficulty: Difficulty;
+  gameMode: GameMode;
   isComputerThinking: boolean;
   onNewGame: () => void;
 }
@@ -23,8 +24,24 @@ function statusMessage(
   status: GameStatus,
   turn: PieceColor,
   playerColor: PieceColor,
+  gameMode: GameMode,
   isComputerThinking: boolean,
 ): { text: string; type: MsgType } {
+  if (gameMode === "multiplayer") {
+    const turnName = turn === "w" ? "White" : "Black";
+    if (status === "checkmate") {
+      const winner = turn === "w" ? "Black" : "White";
+      return { text: `${winner} wins! 🎉`, type: "success" };
+    }
+    if (status === "stalemate") return { text: "Stalemate — Draw", type: "warning" };
+    if (status === "draw") return { text: "Draw", type: "warning" };
+    if (status === "check") {
+      return { text: `Check — ${turnName}'s king in danger!`, type: "danger" };
+    }
+    return { text: `${turnName}'s turn`, type: "normal" };
+  }
+
+  // vs-computer messages
   if (status === "checkmate") {
     const winner = turn === "w" ? "b" : "w";
     return winner === playerColor
@@ -63,10 +80,11 @@ export function StatusBar({
   turn,
   playerColor,
   difficulty,
+  gameMode,
   isComputerThinking,
   onNewGame,
 }: StatusBarProps) {
-  const msg = statusMessage(status, turn, playerColor, isComputerThinking);
+  const msg = statusMessage(status, turn, playerColor, gameMode, isComputerThinking);
   const isOver = status === "checkmate" || status === "stalemate" || status === "draw";
   const blink = msg.type === "danger" || msg.type === "success";
 
@@ -89,7 +107,9 @@ export function StatusBar({
       </div>
       <div className="flex shrink-0 items-center gap-3">
         <span className="text-xs whitespace-nowrap" style={{ color: "var(--color-text-muted)" }}>
-          {playerColor === "w" ? "♔ White" : "♚ Black"} · {DIFFICULTY_LABELS[difficulty]}
+          {gameMode === "multiplayer"
+            ? "👥 Local 2P"
+            : `${playerColor === "w" ? "♔ White" : "♚ Black"} · ${DIFFICULTY_LABELS[difficulty]}`}
         </span>
         <button
           className={cn(

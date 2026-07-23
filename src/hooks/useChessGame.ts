@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   CapturedPieces,
   Difficulty,
+  GameMode,
   GameStatus,
   LastMove,
   PieceColor,
@@ -25,9 +26,10 @@ interface UseChessGameReturn {
   capturedPieces: CapturedPieces;
   playerColor: PieceColor;
   difficulty: Difficulty;
+  gameMode: GameMode;
   isComputerThinking: boolean;
   selectSquare: (sq: Square) => void;
-  resetGame: (color: PieceColor, difficulty: Difficulty) => void;
+  resetGame: (color: PieceColor, difficulty: Difficulty, mode: GameMode) => void;
 }
 
 // Unique ID for each worker message to avoid stale responses
@@ -68,6 +70,7 @@ export function useChessGame(): UseChessGameReturn {
   const [capturedPieces, setCapturedPieces] = useState<CapturedPieces>({ w: [], b: [] });
   const [playerColor, setPlayerColor] = useState<PieceColor>("w");
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [gameMode, setGameMode] = useState<GameMode>("vs-computer");
   const [isComputerThinking, setIsComputerThinking] = useState(false);
 
   // ── Sync derived state from game ──────────────────────────────────────────
@@ -131,7 +134,11 @@ export function useChessGame(): UseChessGameReturn {
     (sq: Square) => {
       const g = gameRef.current;
       if (g.isGameOver() || isComputerThinking) return;
-      if (g.turn() !== playerColor) return; // not player's turn
+
+      if (gameMode === "vs-computer" && g.turn() !== playerColor) return; // not player's turn
+
+      // In multiplayer, allow whichever color's turn it is to select their own pieces
+      const activeColor = gameMode === "multiplayer" ? g.turn() : playerColor;
 
       // If a square is already selected and we're clicking a legal destination
       if (selectedSquare && legalMoveSquares.includes(sq)) {
@@ -141,15 +148,17 @@ export function useChessGame(): UseChessGameReturn {
           setSelectedSquare(null);
           setLegalMoveSquares([]);
           syncState();
-          // Small delay so the player sees their move rendered before AI thinks
-          setTimeout(() => triggerComputerMove(playerColor, difficulty), 150);
+          // Only trigger AI move in vs-computer mode
+          if (gameMode === "vs-computer") {
+            setTimeout(() => triggerComputerMove(playerColor, difficulty), 150);
+          }
           return;
         }
       }
 
-      // Select a new piece belonging to the player
+      // Select a new piece belonging to the active color
       const piece = g.get(sq);
-      if (piece && piece.color === playerColor) {
+      if (piece && piece.color === activeColor) {
         setSelectedSquare(sq);
         const moves = g.moves({ square: sq, verbose: true });
         setLegalMoveSquares(moves.map((m) => m.to as Square));
@@ -164,6 +173,7 @@ export function useChessGame(): UseChessGameReturn {
       legalMoveSquares,
       playerColor,
       difficulty,
+      gameMode,
       isComputerThinking,
       syncState,
       triggerComputerMove,
@@ -172,21 +182,22 @@ export function useChessGame(): UseChessGameReturn {
 
   // ── resetGame ─────────────────────────────────────────────────────────────
   const resetGame = useCallback(
-    (color: PieceColor, diff: Difficulty) => {
+    (color: PieceColor, diff: Difficulty, mode: GameMode) => {
       // Invalidate any in-flight worker message
       pendingMsgId.current = ++msgId;
 
       gameRef.current = new Chess();
       setPlayerColor(color);
       setDifficulty(diff);
+      setGameMode(mode);
       setSelectedSquare(null);
       setLegalMoveSquares([]);
       setLastMove(null);
       setIsComputerThinking(false);
       syncState();
 
-      // If player chose black, computer (white) goes first
-      if (color === "b") {
+      // If vs-computer and player chose black, computer (white) goes first
+      if (mode === "vs-computer" && color === "b") {
         setTimeout(() => triggerComputerMove(color, diff), 300);
       }
     },
@@ -204,6 +215,7 @@ export function useChessGame(): UseChessGameReturn {
     capturedPieces,
     playerColor,
     difficulty,
+    gameMode,
     isComputerThinking,
     selectSquare,
     resetGame,

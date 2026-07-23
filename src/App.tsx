@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { Difficulty, PieceColor } from "./types";
+import type { Difficulty, GameMode, PieceColor } from "./types";
 
 import { Board } from "./components/Board";
 import { SetupScreen } from "./components/SetupScreen";
@@ -22,13 +22,14 @@ export default function App() {
     capturedPieces,
     playerColor,
     difficulty,
+    gameMode,
     isComputerThinking,
     selectSquare,
     resetGame,
   } = useChessGame();
 
-  function handleStart(color: PieceColor, diff: Difficulty) {
-    resetGame(color, diff);
+  function handleStart(color: PieceColor, diff: Difficulty, mode: GameMode) {
+    resetGame(color, diff, mode);
     setGameStarted(true);
   }
 
@@ -74,6 +75,7 @@ export default function App() {
               turn={turn}
               playerColor={playerColor}
               difficulty={difficulty}
+              gameMode={gameMode}
               isComputerThinking={isComputerThinking}
               onNewGame={handleNewGame}
             />
