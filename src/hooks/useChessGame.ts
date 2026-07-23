@@ -26,10 +26,18 @@ interface UseChessGameReturn {
   capturedPieces: CapturedPieces;
   playerColor: PieceColor;
   difficulty: Difficulty;
+  difficultyBlack: Difficulty;
   gameMode: GameMode;
   isComputerThinking: boolean;
+  isPaused: boolean;
   selectSquare: (sq: Square) => void;
-  resetGame: (color: PieceColor, difficulty: Difficulty, mode: GameMode) => void;
+  resetGame: (
+    color: PieceColor,
+    difficulty: Difficulty,
+    mode: GameMode,
+    difficultyBlack?: Difficulty,
+  ) => void;
+  togglePause: () => void;
 }
 
 // Unique ID for each worker message to avoid stale responses
@@ -70,8 +78,16 @@ export function useChessGame(): UseChessGameReturn {
   const [capturedPieces, setCapturedPieces] = useState<CapturedPieces>({ w: [], b: [] });
   const [playerColor, setPlayerColor] = useState<PieceColor>("w");
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [difficultyBlack, setDifficultyBlack] = useState<Difficulty>("medium");
   const [gameMode, setGameMode] = useState<GameMode>("vs-computer");
   const [isComputerThinking, setIsComputerThinking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Refs to mirror state for use inside callbacks without stale closures
+  const gameModeRef = useRef<GameMode>("vs-computer");
+  const difficultyRef = useRef<Difficulty>("medium");
+  const difficultyBlackRef = useRef<Difficulty>("medium");
+  const isPausedRef = useRef(false);
 
   // ── Sync derived state from game ──────────────────────────────────────────
   const syncState = useCallback(() => {
@@ -104,6 +120,22 @@ export function useChessGame(): UseChessGameReturn {
       const last = hist[hist.length - 1];
       if (last) setLastMove({ from: last.from as Square, to: last.to as Square });
       syncState();
+
+      // In CvC mode, automatically schedule the next computer move
+      if (
+        gameModeRef.current === "computer-vs-computer" &&
+        !g.isGameOver() &&
+        !isPausedRef.current
+      ) {
+        const nextDiff = g.turn() === "w" ? difficultyRef.current : difficultyBlackRef.current;
+        const nextId = ++msgId;
+        pendingMsgId.current = nextId;
+        setTimeout(() => {
+          if (nextId !== pendingMsgId.current) return; // guard against reset during delay
+          setIsComputerThinking(true);
+          worker.postMessage({ fen: g.fen(), depth: DEPTH_MAP[nextDiff], id: nextId });
+        }, 150);
+      }
     };
 
     workerRef.current = worker;
@@ -112,19 +144,25 @@ export function useChessGame(): UseChessGameReturn {
 
   // ── Trigger computer move ─────────────────────────────────────────────────
   const triggerComputerMove = useCallback(
-    (currentPlayerColor: PieceColor, currentDifficulty: Difficulty) => {
+    (
+      currentPlayerColor: PieceColor,
+      currentDifficulty: Difficulty,
+      currentDifficultyBlack: Difficulty,
+      currentMode: GameMode,
+    ) => {
       const g = gameRef.current;
       if (g.isGameOver()) return;
-      if (g.turn() === currentPlayerColor) return; // it's the player's turn
+      // In vs-computer mode, only move when it's NOT the player's turn
+      if (currentMode === "vs-computer" && g.turn() === currentPlayerColor) return;
+
+      // Pick depth based on which side is about to move
+      const depth =
+        g.turn() === "b" ? DEPTH_MAP[currentDifficultyBlack] : DEPTH_MAP[currentDifficulty];
 
       setIsComputerThinking(true);
       const id = ++msgId;
       pendingMsgId.current = id;
-      workerRef.current?.postMessage({
-        fen: g.fen(),
-        depth: DEPTH_MAP[currentDifficulty],
-        id,
-      });
+      workerRef.current?.postMessage({ fen: g.fen(), depth, id });
     },
     [],
   );
@@ -134,6 +172,7 @@ export function useChessGame(): UseChessGameReturn {
     (sq: Square) => {
       const g = gameRef.current;
       if (g.isGameOver() || isComputerThinking) return;
+      if (gameMode === "computer-vs-computer") return; // view-only in CvC
 
       if (gameMode === "vs-computer" && g.turn() !== playerColor) return; // not player's turn
 
@@ -150,7 +189,10 @@ export function useChessGame(): UseChessGameReturn {
           syncState();
           // Only trigger AI move in vs-computer mode
           if (gameMode === "vs-computer") {
-            setTimeout(() => triggerComputerMove(playerColor, difficulty), 150);
+            setTimeout(
+              () => triggerComputerMove(playerColor, difficulty, difficultyBlack, gameMode),
+              150,
+            );
           }
           return;
         }
@@ -173,6 +215,7 @@ export function useChessGame(): UseChessGameReturn {
       legalMoveSquares,
       playerColor,
       difficulty,
+      difficultyBlack,
       gameMode,
       isComputerThinking,
       syncState,
@@ -182,27 +225,57 @@ export function useChessGame(): UseChessGameReturn {
 
   // ── resetGame ─────────────────────────────────────────────────────────────
   const resetGame = useCallback(
-    (color: PieceColor, diff: Difficulty, mode: GameMode) => {
+    (color: PieceColor, diff: Difficulty, mode: GameMode, diffBlack: Difficulty = "medium") => {
       // Invalidate any in-flight worker message
       pendingMsgId.current = ++msgId;
 
       gameRef.current = new Chess();
       setPlayerColor(color);
       setDifficulty(diff);
+      setDifficultyBlack(diffBlack);
       setGameMode(mode);
       setSelectedSquare(null);
       setLegalMoveSquares([]);
       setLastMove(null);
       setIsComputerThinking(false);
+      setIsPaused(false);
+
+      // Keep refs in sync
+      gameModeRef.current = mode;
+      difficultyRef.current = diff;
+      difficultyBlackRef.current = diffBlack;
+      isPausedRef.current = false;
+
       syncState();
 
-      // If vs-computer and player chose black, computer (white) goes first
-      if (mode === "vs-computer" && color === "b") {
-        setTimeout(() => triggerComputerMove(color, diff), 300);
+      if (mode === "computer-vs-computer") {
+        // White always moves first in CvC
+        setTimeout(() => triggerComputerMove(color, diff, diffBlack, mode), 300);
+      } else if (mode === "vs-computer" && color === "b") {
+        // Player chose black — computer (white) goes first
+        setTimeout(() => triggerComputerMove(color, diff, diffBlack, mode), 300);
       }
     },
     [syncState, triggerComputerMove],
   );
+
+  // ── togglePause ───────────────────────────────────────────────────────────
+  const togglePause = useCallback(() => {
+    const g = gameRef.current;
+    const nowPaused = !isPausedRef.current;
+    isPausedRef.current = nowPaused;
+    setIsPaused(nowPaused);
+
+    if (!nowPaused && !g.isGameOver()) {
+      // Resumed — trigger the next move immediately
+      triggerComputerMove(
+        "w",
+        difficultyRef.current,
+        difficultyBlackRef.current,
+        gameModeRef.current,
+      );
+    }
+  }, [triggerComputerMove]);
 
   return {
     fen,
@@ -215,9 +288,12 @@ export function useChessGame(): UseChessGameReturn {
     capturedPieces,
     playerColor,
     difficulty,
+    difficultyBlack,
     gameMode,
     isComputerThinking,
+    isPaused,
     selectSquare,
     resetGame,
+    togglePause,
   };
 }

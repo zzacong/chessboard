@@ -22,14 +22,17 @@ export default function App() {
     capturedPieces,
     playerColor,
     difficulty,
+    difficultyBlack,
     gameMode,
     isComputerThinking,
+    isPaused,
     selectSquare,
     resetGame,
+    togglePause,
   } = useChessGame();
 
-  function handleStart(color: PieceColor, diff: Difficulty, mode: GameMode) {
-    resetGame(color, diff, mode);
+  function handleStart(color: PieceColor, diff: Difficulty, mode: GameMode, diffBlack: Difficulty) {
+    resetGame(color, diff, mode, diffBlack);
     setGameStarted(true);
   }
 
@@ -75,9 +78,12 @@ export default function App() {
               turn={turn}
               playerColor={playerColor}
               difficulty={difficulty}
+              difficultyBlack={difficultyBlack}
               gameMode={gameMode}
               isComputerThinking={isComputerThinking}
+              isPaused={isPaused}
               onNewGame={handleNewGame}
+              onTogglePause={togglePause}
             />
             <Board
               fen={fen}

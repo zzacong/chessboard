@@ -4,7 +4,7 @@ import type { Square } from "chess.js";
 export type PieceColor = "w" | "b";
 export type PieceType = "p" | "n" | "b" | "r" | "q" | "k";
 export type Difficulty = "easy" | "medium" | "hard";
-export type GameMode = "vs-computer" | "multiplayer";
+export type GameMode = "vs-computer" | "multiplayer" | "computer-vs-computer";
 export type GameStatus = "idle" | "playing" | "check" | "checkmate" | "stalemate" | "draw";
 
 export const DEPTH_MAP: Record<Difficulty, number> = {

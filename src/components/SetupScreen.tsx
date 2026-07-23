@@ -3,12 +3,18 @@ import { useState } from "react";
 import type { Difficulty, GameMode, PieceColor } from "../types";
 
 interface SetupScreenProps {
-  onStart: (color: PieceColor, difficulty: Difficulty, mode: GameMode) => void;
+  onStart: (
+    color: PieceColor,
+    difficulty: Difficulty,
+    mode: GameMode,
+    difficultyBlack: Difficulty,
+  ) => void;
 }
 
 const MODES: { value: GameMode; label: string; icon: string }[] = [
   { value: "vs-computer", label: "vs Computer", icon: "🤖" },
   { value: "multiplayer", label: "Local 2 Player", icon: "👥" },
+  { value: "computer-vs-computer", label: "CPU vs CPU", icon: "🤖🤖" },
 ];
 
 const COLORS: { value: PieceColor; label: string; symbol: string }[] = [
@@ -22,10 +28,51 @@ const DIFFICULTIES: { value: Difficulty; label: string; desc: string }[] = [
   { value: "hard", label: "Hard", desc: "Depth 5" },
 ];
 
+function DifficultyPicker({
+  selected,
+  onChange,
+}: {
+  selected: Difficulty;
+  onChange: (d: Difficulty) => void;
+}) {
+  return (
+    <div className="flex gap-2.5">
+      {DIFFICULTIES.map((d) => (
+        <button
+          key={d.value}
+          className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 transition-[border-color,background] duration-150"
+          style={
+            selected === d.value
+              ? {
+                  borderColor: "var(--color-accent)",
+                  background: "rgba(233,69,96,0.1)",
+                  color: "#fff",
+                }
+              : {
+                  borderColor: "var(--color-border)",
+                  background: "var(--color-bg)",
+                  color: "var(--color-text)",
+                }
+          }
+          onClick={() => onChange(d.value)}
+        >
+          <span className="text-sm font-semibold">{d.label}</span>
+          <span className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>
+            {d.desc}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function SetupScreen({ onStart }: SetupScreenProps) {
   const [gameMode, setGameMode] = useState<GameMode>("vs-computer");
   const [color, setColor] = useState<PieceColor>("w");
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [difficultyBlack, setDifficultyBlack] = useState<Difficulty>("medium");
+
+  const isCvC = gameMode === "computer-vs-computer";
 
   return (
     <div
@@ -83,57 +130,22 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
           </div>
         </section>
 
-        {/* Play as */}
-        <section className="mb-7 text-left">
-          <h2
-            className="mb-2.5 text-[11px] font-bold tracking-[0.08em] uppercase"
-            style={{ color: "var(--color-text-muted)" }}
-          >
-            Play as
-          </h2>
-          <div className="flex gap-2.5">
-            {COLORS.map((c) => (
-              <button
-                key={c.value}
-                className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 text-sm font-medium transition-[border-color,background] duration-150"
-                style={
-                  color === c.value
-                    ? {
-                        borderColor: "var(--color-accent)",
-                        background: "rgba(233,69,96,0.1)",
-                        color: "#fff",
-                      }
-                    : {
-                        borderColor: "var(--color-border)",
-                        background: "var(--color-bg)",
-                        color: "var(--color-text)",
-                      }
-                }
-                onClick={() => setColor(c.value)}
-              >
-                <span className="text-[28px] leading-none">{c.symbol}</span>
-                <span>{c.label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Difficulty — only in vs-computer mode */}
-        {gameMode === "vs-computer" && (
+        {/* Play as — hidden in CvC */}
+        {!isCvC && (
           <section className="mb-7 text-left">
             <h2
               className="mb-2.5 text-[11px] font-bold tracking-[0.08em] uppercase"
               style={{ color: "var(--color-text-muted)" }}
             >
-              Difficulty
+              Play as
             </h2>
             <div className="flex gap-2.5">
-              {DIFFICULTIES.map((d) => (
+              {COLORS.map((c) => (
                 <button
-                  key={d.value}
-                  className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 transition-[border-color,background] duration-150"
+                  key={c.value}
+                  className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 text-sm font-medium transition-[border-color,background] duration-150"
                   style={
-                    difficulty === d.value
+                    color === c.value
                       ? {
                           borderColor: "var(--color-accent)",
                           background: "rgba(233,69,96,0.1)",
@@ -145,14 +157,49 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
                           color: "var(--color-text)",
                         }
                   }
-                  onClick={() => setDifficulty(d.value)}
+                  onClick={() => setColor(c.value)}
                 >
-                  <span className="text-sm font-semibold">{d.label}</span>
-                  <span className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>
-                    {d.desc}
-                  </span>
+                  <span className="text-[28px] leading-none">{c.symbol}</span>
+                  <span>{c.label}</span>
                 </button>
               ))}
+            </div>
+          </section>
+        )}
+
+        {/* Difficulty — single picker for vs-computer */}
+        {gameMode === "vs-computer" && (
+          <section className="mb-7 text-left">
+            <h2
+              className="mb-2.5 text-[11px] font-bold tracking-[0.08em] uppercase"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              Difficulty
+            </h2>
+            <DifficultyPicker selected={difficulty} onChange={setDifficulty} />
+          </section>
+        )}
+
+        {/* Difficulty — dual pickers for CvC */}
+        {isCvC && (
+          <section className="mb-7 text-left">
+            <div className="mb-4">
+              <h2
+                className="mb-2.5 text-[11px] font-bold tracking-[0.08em] uppercase"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                White difficulty ♔
+              </h2>
+              <DifficultyPicker selected={difficulty} onChange={setDifficulty} />
+            </div>
+            <div>
+              <h2
+                className="mb-2.5 text-[11px] font-bold tracking-[0.08em] uppercase"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                Black difficulty ♚
+              </h2>
+              <DifficultyPicker selected={difficultyBlack} onChange={setDifficultyBlack} />
             </div>
           </section>
         )}
@@ -160,7 +207,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
         <button
           className="mt-1 w-full rounded-xl py-3.5 text-base font-bold tracking-wide text-white transition-[opacity,transform] duration-150 hover:opacity-90 active:scale-[0.98]"
           style={{ background: "var(--color-accent)", border: "none" }}
-          onClick={() => onStart(color, difficulty, gameMode)}
+          onClick={() => onStart(color, difficulty, gameMode, difficultyBlack)}
         >
           Start Game
         </button>

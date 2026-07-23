@@ -7,9 +7,12 @@ interface StatusBarProps {
   turn: PieceColor;
   playerColor: PieceColor;
   difficulty: Difficulty;
+  difficultyBlack: Difficulty;
   gameMode: GameMode;
   isComputerThinking: boolean;
+  isPaused: boolean;
   onNewGame: () => void;
+  onTogglePause: () => void;
 }
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -26,7 +29,23 @@ function statusMessage(
   playerColor: PieceColor,
   gameMode: GameMode,
   isComputerThinking: boolean,
+  isPaused: boolean,
 ): { text: string; type: MsgType } {
+  if (gameMode === "computer-vs-computer") {
+    const turnName = turn === "w" ? "White" : "Black";
+    if (status === "checkmate") {
+      const winner = turn === "w" ? "Black" : "White";
+      return { text: `Checkmate — ${winner} wins! 🎉`, type: "success" };
+    }
+    if (status === "stalemate") return { text: "Stalemate — Draw", type: "warning" };
+    if (status === "draw") return { text: "Draw", type: "warning" };
+    if (status === "check") {
+      return { text: `Check — ${turnName}'s king in danger!`, type: "danger" };
+    }
+    if (isPaused) return { text: "Paused", type: "warning" };
+    return { text: `${turnName} is thinking…`, type: "normal" };
+  }
+
   if (gameMode === "multiplayer") {
     const turnName = turn === "w" ? "White" : "Black";
     if (status === "checkmate") {
@@ -80,13 +99,25 @@ export function StatusBar({
   turn,
   playerColor,
   difficulty,
+  difficultyBlack,
   gameMode,
   isComputerThinking,
+  isPaused,
   onNewGame,
+  onTogglePause,
 }: StatusBarProps) {
-  const msg = statusMessage(status, turn, playerColor, gameMode, isComputerThinking);
+  const msg = statusMessage(status, turn, playerColor, gameMode, isComputerThinking, isPaused);
   const isOver = status === "checkmate" || status === "stalemate" || status === "draw";
   const blink = msg.type === "danger" || msg.type === "success";
+
+  let modeChip: string;
+  if (gameMode === "multiplayer") {
+    modeChip = "👥 Local 2P";
+  } else if (gameMode === "computer-vs-computer") {
+    modeChip = `🤖 CPU vs CPU · ${DIFFICULTY_LABELS[difficulty]} vs ${DIFFICULTY_LABELS[difficultyBlack]}`;
+  } else {
+    modeChip = `${playerColor === "w" ? "♔ White" : "♚ Black"} · ${DIFFICULTY_LABELS[difficulty]}`;
+  }
 
   return (
     <div
@@ -107,10 +138,21 @@ export function StatusBar({
       </div>
       <div className="flex shrink-0 items-center gap-3">
         <span className="text-xs whitespace-nowrap" style={{ color: "var(--color-text-muted)" }}>
-          {gameMode === "multiplayer"
-            ? "👥 Local 2P"
-            : `${playerColor === "w" ? "♔ White" : "♚ Black"} · ${DIFFICULTY_LABELS[difficulty]}`}
+          {modeChip}
         </span>
+        {gameMode === "computer-vs-computer" && !isOver && (
+          <button
+            className="rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
+            style={{
+              background: "transparent",
+              border: "1.5px solid var(--color-border)",
+              color: "var(--color-text)",
+            }}
+            onClick={onTogglePause}
+          >
+            {isPaused ? "Resume" : "Pause"}
+          </button>
+        )}
         <button
           className={cn(
             "rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5",
