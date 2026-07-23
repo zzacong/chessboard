@@ -1,5 +1,7 @@
 import type { Difficulty, GameStatus, PieceColor } from "../types";
 
+import { cn } from "../lib/cn";
+
 interface StatusBarProps {
   status: GameStatus;
   turn: PieceColor;
@@ -75,7 +77,7 @@ export function StatusBar({
     >
       <div className="flex min-w-0 items-center gap-2.5">
         <span
-          className={`h-2 w-2 rounded-full shrink-0${blink ? " animate-blink" : ""}`}
+          className={cn("h-2 w-2 shrink-0 rounded-full", blink && "animate-blink")}
           style={{ background: indicatorColor[msg.type] }}
         />
         <span
@@ -90,9 +92,10 @@ export function StatusBar({
           {playerColor === "w" ? "♔ White" : "♚ Black"} · {DIFFICULTY_LABELS[difficulty]}
         </span>
         <button
-          className={`rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5${
-            isOver ? " animate-pulse-border" : ""
-          }`}
+          className={cn(
+            "rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5",
+            isOver && "animate-pulse-border",
+          )}
           style={
             isOver
               ? {

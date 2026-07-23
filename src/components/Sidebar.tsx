@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 import type { CapturedPieces, PieceColor, PieceType } from "../types";
 
+import { cn } from "../lib/cn";
 import { getPieceComponent } from "./pieces";
 
 interface SidebarProps {
@@ -132,7 +133,10 @@ export function Sidebar({
           {paired.map(([white, black], idx) => (
             <div
               key={idx}
-              className={`grid items-center gap-0.5 rounded px-1 py-0.5 text-[13px]${idx === paired.length - 1 ? " bg-white/5" : ""}`}
+              className={cn(
+                "grid items-center gap-0.5 rounded px-1 py-0.5 text-[13px]",
+                idx === paired.length - 1 && "bg-white/5",
+              )}
               style={{ gridTemplateColumns: "28px 1fr 1fr" }}
             >
               <span

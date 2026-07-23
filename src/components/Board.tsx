@@ -4,6 +4,7 @@ import { Chess } from "chess.js";
 
 import type { LastMove, PieceColor } from "../types";
 
+import { cn } from "../lib/cn";
 import { getPieceComponent } from "./pieces";
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;
@@ -93,16 +94,13 @@ export function Board({
 
             const PieceComp = piece ? getPieceComponent(piece.color, piece.type) : null;
 
-            const squareClass = [
-              "relative flex items-center justify-center cursor-pointer group",
+            const squareClass = cn(
+              "group hover:sq-hover relative flex cursor-pointer items-center justify-center",
               isLight ? "sq-light" : "sq-dark",
-              isSelected ? "sq-selected" : "",
-              isLastFrom || isLastTo ? "sq-last-move" : "",
-              isKingInCheck ? "sq-in-check" : "",
-              "hover:sq-hover",
-            ]
-              .filter(Boolean)
-              .join(" ");
+              isSelected && "sq-selected",
+              (isLastFrom || isLastTo) && "sq-last-move",
+              isKingInCheck && "sq-in-check",
+            );
 
             return (
               <div
