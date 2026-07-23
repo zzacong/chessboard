@@ -12,4 +12,4 @@ This file provides guidance to agents when working with code in this repository.
 - **Worker pattern is fixed** — spawn with `new Worker(new URL('../engine/chessWorker.ts', import.meta.url), { type: 'module' })`. Do not change `worker.format` in `vite.config.ts`; it must stay `"es"`.
 - **Game logic stays in the hook** — `useChessGame` owns all Chess state and worker communication. Components must remain presentational (no direct `Chess` instantiation except `Board.tsx` which creates a read-only instance from the passed FEN to render pieces).
 - **Stale-message guard** — any new worker message must increment the module-level `msgId` and store the new id in `pendingMsgId.current`; responses with a different id must be discarded.
-- **Run `pnpm fmt && pnpm typecheck && pnpm lint` before finishing** — there are no tests; these three checks are the validation gate.
+- **Run `pnpm fmt && pnpm typecheck && pnpm lint && pnpm test` before finishing** — these four checks are the validation gate. Test APIs (`describe`, `it`, `expect`, `vi`) must be imported explicitly from `"vitest"`.
