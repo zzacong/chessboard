@@ -1,7 +1,3 @@
-import React from "react";
-
-import type { PieceColor, PieceType } from "../../types";
-
 // ── Individual piece SVG components ──────────────────────────────────────────
 // Based on the Wikimedia Commons "Chess piece - 2D" SVG set (public domain)
 
@@ -282,26 +278,4 @@ export function BPawn({ size = 45 }: PieceProps) {
       />
     </svg>
   );
-}
-
-// ── Lookup map ────────────────────────────────────────────────────────────────
-type PieceComponent = (props: PieceProps) => React.JSX.Element;
-
-export const PIECE_COMPONENTS: Record<string, PieceComponent> = {
-  wk: WKing,
-  wq: WQueen,
-  wr: WRook,
-  wb: WBishop,
-  wn: WKnight,
-  wp: WPawn,
-  bk: BKing,
-  bq: BQueen,
-  br: BRook,
-  bb: BBishop,
-  bn: BKnight,
-  bp: BPawn,
-};
-
-export function getPieceComponent(color: PieceColor, type: PieceType): PieceComponent | null {
-  return PIECE_COMPONENTS[`${color}${type}`] ?? null;
 }

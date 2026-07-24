@@ -4,7 +4,7 @@ import { Chess } from "chess.js";
 
 import { cn } from "../lib/cn";
 import { useChessStore } from "../store/chessStore";
-import { getPieceComponent } from "./pieces";
+import { getPieceComponent } from "./pieces/lookup";
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;
 

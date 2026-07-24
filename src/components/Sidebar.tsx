@@ -4,7 +4,7 @@ import type { PieceColor, PieceType } from "../types";
 
 import { cn } from "../lib/cn";
 import { useChessStore } from "../store/chessStore";
-import { getPieceComponent } from "./pieces";
+import { getPieceComponent } from "./pieces/lookup";
 
 const PIECE_VALUES_DISPLAY: Record<PieceType, number> = {
   q: 9,
