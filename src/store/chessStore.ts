@@ -228,7 +228,7 @@ const chessStore = createStore<ChessStore>()(
 );
 
 // ── Worker bootstrap (once at module load) ────────────────────────────────────
-worker = new Worker(new URL("../engine/chessWorker.ts", import.meta.url), { type: "module" });
+worker = new Worker(new URL("../lib/engine/chessWorker.ts", import.meta.url), { type: "module" });
 
 worker.onmessage = (e: MessageEvent<{ bestMove: string; id: number }>) => {
   const { bestMove, id } = e.data;
