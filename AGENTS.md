@@ -27,9 +27,10 @@ pnpm fmt          # oxfmt (auto-fix)
 pnpm fmt:check    # check formatting without writing
 pnpm test         # vitest run (single pass)
 pnpm test:watch   # vitest (watch mode)
+pnpm check        # fmt:check && typecheck && lint && test (full validation gate)
 ```
 
-Tests use **Vitest** with `jsdom` environment. Import test APIs explicitly from `"vitest"` — e.g. `import { describe, it, expect } from "vitest"`. The validation gate is `pnpm fmt && pnpm typecheck && pnpm lint && pnpm test`.
+Tests use **Vitest** with `jsdom` environment. Import test APIs explicitly from `"vitest"` — e.g. `import { describe, it, expect } from "vitest"`. The validation gate is `pnpm check` (or individually: `pnpm fmt:check && pnpm typecheck && pnpm lint && pnpm test`).
 
 ## Import Order (enforced by oxfmt)
 
