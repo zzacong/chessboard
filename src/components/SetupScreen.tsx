@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import type { Difficulty, GameMode, PieceColor } from "../types";
+import type { Difficulty, GameMode, PieceColor } from "@/types";
 
-import { cn } from "../lib/cn";
+import { cn } from "@/lib/cn";
 
 interface SetupScreenProps {
   onStart: (

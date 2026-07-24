@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DEPTH_MAP } from "../types";
+import { DEPTH_MAP } from "@/types";
 
 describe("DEPTH_MAP", () => {
   it("has the correct depth for easy difficulty", () => {

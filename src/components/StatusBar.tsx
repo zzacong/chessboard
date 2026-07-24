@@ -1,7 +1,7 @@
-import type { Difficulty, GameMode, GameStatus, PieceColor } from "../types";
+import type { Difficulty, GameMode, GameStatus, PieceColor } from "@/types";
 
-import { cn } from "../lib/cn";
-import { useChessStore } from "../store/chessStore";
+import { cn } from "@/lib/cn";
+import { useChessStore } from "@/store/chessStore";
 
 interface StatusBarProps {
   onNewGame: () => void;

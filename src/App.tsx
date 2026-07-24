@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import type { Difficulty, GameMode, PieceColor } from "./types";
+import type { Difficulty, GameMode, PieceColor } from "@/types";
 
-import { Board } from "./components/Board";
-import { SetupScreen } from "./components/SetupScreen";
-import { Sidebar } from "./components/Sidebar";
-import { StatusBar } from "./components/StatusBar";
-import { useChessStore } from "./store/chessStore";
+import { Board } from "@/components/Board";
+import { SetupScreen } from "@/components/SetupScreen";
+import { Sidebar } from "@/components/Sidebar";
+import { StatusBar } from "@/components/StatusBar";
+import { useChessStore } from "@/store/chessStore";
 
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);

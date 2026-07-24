@@ -2,9 +2,9 @@ import type { Square } from "chess.js";
 
 import { Chess } from "chess.js";
 
-import { cn } from "../lib/cn";
-import { useChessStore } from "../store/chessStore";
-import { getPieceComponent } from "./pieces/lookup";
+import { getPieceComponent } from "@/components/pieces/lookup";
+import { cn } from "@/lib/cn";
+import { useChessStore } from "@/store/chessStore";
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;
 

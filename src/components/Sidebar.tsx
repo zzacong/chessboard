@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import type { PieceColor, PieceType } from "../types";
+import type { PieceColor, PieceType } from "@/types";
 
-import { cn } from "../lib/cn";
-import { useChessStore } from "../store/chessStore";
-import { getPieceComponent } from "./pieces/lookup";
+import { getPieceComponent } from "@/components/pieces/lookup";
+import { cn } from "@/lib/cn";
+import { useChessStore } from "@/store/chessStore";
 
 const PIECE_VALUES_DISPLAY: Record<PieceType, number> = {
   q: 9,

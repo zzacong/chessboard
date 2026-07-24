@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cn } from "../lib/cn";
+import { cn } from "@/lib/cn";
 
 describe("cn", () => {
   it("returns a single class unchanged", () => {

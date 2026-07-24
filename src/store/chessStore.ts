@@ -12,9 +12,9 @@ import type {
   LastMove,
   PieceColor,
   PieceType,
-} from "../types";
+} from "@/types";
 
-import { DEPTH_MAP } from "../types";
+import { DEPTH_MAP } from "@/types";
 
 // ── Module-level non-reactive state ──────────────────────────────────────────
 // These don't need to trigger re-renders so they live outside Zustand.

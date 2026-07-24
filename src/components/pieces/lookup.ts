@@ -1,6 +1,6 @@
 import type React from "react";
 
-import type { PieceColor, PieceType } from "../../types";
+import type { PieceColor, PieceType } from "@/types";
 
 import {
   BBishop,
