@@ -96,9 +96,13 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
   const isComputerThinking = useChessStore((s) => s.isComputerThinking);
   const isPaused = useChessStore((s) => s.isPaused);
   const togglePause = useChessStore((s) => s.togglePause);
+  const undoMove = useChessStore((s) => s.undoMove);
+  const history = useChessStore((s) => s.history);
 
   const msg = statusMessage(status, turn, playerColor, gameMode, isComputerThinking, isPaused);
   const isOver = status === "checkmate" || status === "stalemate" || status === "draw";
+  const canUndo =
+    gameMode !== "computer-vs-computer" && !isOver && !isComputerThinking && history.length > 0;
   const blink = msg.type === "danger" || msg.type === "success";
 
   let modeChip: string;
@@ -134,6 +138,19 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
         <span className="text-xs whitespace-nowrap" style={{ color: "var(--color-text-muted)" }}>
           {modeChip}
         </span>
+        {canUndo && (
+          <button
+            className="rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
+            style={{
+              background: "transparent",
+              border: "1.5px solid var(--color-border)",
+              color: "var(--color-text)",
+            }}
+            onClick={undoMove}
+          >
+            Undo
+          </button>
+        )}
         {gameMode === "computer-vs-computer" && !isOver && (
           <button
             className="rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"

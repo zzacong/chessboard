@@ -77,6 +77,7 @@ interface ChessActions {
     difficultyBlack?: Difficulty,
   ) => void;
   togglePause: () => void;
+  undoMove: () => void;
 }
 
 type ChessStore = ChessState & ChessActions;
@@ -208,6 +209,39 @@ const chessStore = createStore<ChessStore>()(
           setTimeout(() => get().triggerComputerMove(color, diff, diffBlack, mode), 300);
         } else if (mode === "vs-computer" && color === "b") {
           setTimeout(() => get().triggerComputerMove(color, diff, diffBlack, mode), 300);
+        }
+      },
+
+      // ── undoMove ────────────────────────────────────────────────────────────
+      undoMove: () => {
+        const { gameMode, playerColor, isComputerThinking } = get();
+        if (isComputerThinking) return;
+        if (game.isGameOver()) return;
+
+        // In vs-computer, undo 2 half-moves (opponent + player); in multiplayer, undo 1.
+        const plies = gameMode === "vs-computer" ? 2 : 1;
+        for (let i = 0; i < plies; i++) {
+          if (game.history().length === 0) break;
+          game.undo();
+        }
+
+        const hist = game.history({ verbose: true });
+        const last = hist[hist.length - 1];
+        set({
+          selectedSquare: null,
+          legalMoveSquares: [],
+          lastMove: last ? { from: last.from as Square, to: last.to as Square } : null,
+        });
+        get().syncState();
+
+        // Re-trigger computer if we landed on its turn (edge case: player is black, undo
+        // landed on white's turn which belongs to the computer).
+        if (gameMode === "vs-computer" && game.turn() !== playerColor && !game.isGameOver()) {
+          const { difficulty, difficultyBlack } = get();
+          setTimeout(
+            () => get().triggerComputerMove(playerColor, difficulty, difficultyBlack, gameMode),
+            150,
+          );
         }
       },
 
