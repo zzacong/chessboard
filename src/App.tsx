@@ -6,30 +6,11 @@ import { Board } from "./components/Board";
 import { SetupScreen } from "./components/SetupScreen";
 import { Sidebar } from "./components/Sidebar";
 import { StatusBar } from "./components/StatusBar";
-import { useChessGame } from "./hooks/useChessGame";
+import { useChessStore } from "./store/chessStore";
 
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);
-
-  const {
-    fen,
-    turn,
-    selectedSquare,
-    legalMoveSquares,
-    lastMove,
-    status,
-    history,
-    capturedPieces,
-    playerColor,
-    difficulty,
-    difficultyBlack,
-    gameMode,
-    isComputerThinking,
-    isPaused,
-    selectSquare,
-    resetGame,
-    togglePause,
-  } = useChessGame();
+  const resetGame = useChessStore((s) => s.resetGame);
 
   function handleStart(color: PieceColor, diff: Difficulty, mode: GameMode, diffBlack: Difficulty) {
     resetGame(color, diff, mode, diffBlack);
@@ -79,35 +60,11 @@ export default function App() {
       <main className="flex flex-1 items-start justify-center px-5 pt-7 pb-10">
         <div className="flex items-start gap-5 max-sm:w-full max-sm:flex-col max-sm:items-center">
           <div className="flex flex-col items-start gap-3 max-sm:w-full max-sm:items-center">
-            <StatusBar
-              status={status}
-              turn={turn}
-              playerColor={playerColor}
-              difficulty={difficulty}
-              difficultyBlack={difficultyBlack}
-              gameMode={gameMode}
-              isComputerThinking={isComputerThinking}
-              isPaused={isPaused}
-              onNewGame={handleNewGame}
-              onTogglePause={togglePause}
-            />
-            <Board
-              fen={fen}
-              selectedSquare={selectedSquare}
-              legalMoveSquares={legalMoveSquares}
-              lastMove={lastMove}
-              playerColor={playerColor}
-              isComputerThinking={isComputerThinking}
-              onSquareClick={selectSquare}
-            />
+            <StatusBar onNewGame={handleNewGame} />
+            <Board />
           </div>
 
-          <Sidebar
-            history={history}
-            capturedPieces={capturedPieces}
-            playerColor={playerColor}
-            isComputerThinking={isComputerThinking}
-          />
+          <Sidebar />
         </div>
       </main>
     </div>

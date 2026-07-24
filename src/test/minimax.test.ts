@@ -1,7 +1,7 @@
 import { Chess } from "chess.js";
 import { describe, expect, it } from "vitest";
 
-import { getBestMove } from "../engine/minimax";
+import { getBestMove } from "../lib/engine/minimax";
 
 // Scholar's mate threat: after 1.e4 e5 2.Bc4 Nc6 3.Qh5 — Qxf7# is available
 const SCHOLARS_MATE_THREAT_FEN =

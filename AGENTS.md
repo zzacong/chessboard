@@ -14,7 +14,7 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Stack
 
-React 19 + TypeScript 6 + Vite 8, styled with **Tailwind CSS v4** (via `@tailwindcss/vite` plugin — no `tailwind.config.js`) and formatted/linted with **oxfmt** / **oxlint**.
+React 19 + TypeScript 6 + Vite 8, styled with **Tailwind CSS v4** (via `@tailwindcss/vite` plugin — no `tailwind.config.js`) and formatted/linted with **oxfmt** / **oxlint**. State managed with **Zustand 5** (`src/store/chessStore.ts`).
 
 ## Commands
 
@@ -49,7 +49,8 @@ Within components, type imports from `chess.js` precede value imports; internal 
 - **`cn()` utility** — always use `src/lib/cn.ts` (clsx + tailwind-merge) for conditional class names. oxfmt sorts Tailwind classes inside `cn()` and `clsx()` calls automatically against `src/index.css`.
 - **CSS custom properties for board sizing** — board square dimensions are driven by `--sq-size` / `--board-size` CSS variables defined in `src/index.css`; use `style={{ width: "var(--sq-size)" }}` rather than Tailwind for anything that depends on these tokens.
 - **Board square classes live in `src/index.css`** — `sq-light`, `sq-dark`, `sq-selected`, `sq-last-move`, `sq-in-check`, `legal-dot`, `legal-ring`, `animate-blink`, `animate-pulse-border`, `animate-pulse-opacity` are plain CSS classes (not Tailwind utilities) because Tailwind can't express dynamic CSS-var values.
-- **Web Worker** — the AI engine runs in `src/engine/chessWorker.ts` spawned via `new Worker(new URL('../engine/chessWorker.ts', import.meta.url), { type: 'module' })`. Vite handles this natively (`worker.format: "es"` in `vite.config.ts`). Only one message is in-flight at a time; stale responses are discarded via a monotonic `msgId`.
+- **Web Worker** — the AI engine runs in `src/engine/chessWorker.ts`. The worker is spawned **once at store module load** (not inside a React effect) in `src/store/chessStore.ts`. Vite handles this natively (`worker.format: "es"` in `vite.config.ts`). Only one message is in-flight at a time; stale responses are discarded via a module-level `pendingMsgId` counter.
+- **Zustand store** — all game state lives in `src/store/chessStore.ts` (`useChessStore`). The Chess.js instance (`game`), worker reference, and `msgId` counter are module-level variables (not Zustand state) because they don't need to trigger re-renders. Use `useChessStore.getState()` inside worker callbacks and `setTimeout`s — no refs needed for stale-closure workarounds.
 - **`verbatimModuleSyntax: true`** — all type-only imports must use `import type { ... }`, not `import { type ... }`.
 - **`erasableSyntaxOnly: true`** — TypeScript `enum` and namespace declarations are forbidden; use `const` object maps instead (see `DEPTH_MAP` in `src/types.ts`).
 - **`noUnusedLocals` / `noUnusedParameters`** — the compiler rejects unused variables and parameters; prefix with `_` if intentionally unused.
@@ -57,7 +58,7 @@ Within components, type imports from `chess.js` precede value imports; internal 
 ## Architecture
 
 ```
-App.tsx  ──→  useChessGame (src/hooks/)   ←── chessWorker (src/engine/)
+App.tsx  ──→  useChessStore (src/store/)  ←── chessWorker (src/engine/)
                │                                     │
                ├─ Board.tsx                          └─ minimax.ts
                ├─ Sidebar.tsx
@@ -65,6 +66,7 @@ App.tsx  ──→  useChessGame (src/hooks/)   ←── chessWorker (src/engin
                └─ SetupScreen.tsx
 ```
 
-- All game state lives in `useChessGame`; components are purely presentational.
+- All game state lives in the Zustand store (`src/store/chessStore.ts`); components subscribe directly to the slices they need via `useChessStore(selector)`.
+- `App.tsx` owns only `gameStarted` local state and calls `resetGame` from the store on game start.
 - `src/types.ts` is the single source of truth for shared types and constants (`DEPTH_MAP`, `GameStatus`, etc.).
 - Pawn promotion is always auto-promoted to queen (`promotion: "q"`).

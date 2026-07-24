@@ -1,18 +1,10 @@
 import type { Difficulty, GameMode, GameStatus, PieceColor } from "../types";
 
 import { cn } from "../lib/cn";
+import { useChessStore } from "../store/chessStore";
 
 interface StatusBarProps {
-  status: GameStatus;
-  turn: PieceColor;
-  playerColor: PieceColor;
-  difficulty: Difficulty;
-  difficultyBlack: Difficulty;
-  gameMode: GameMode;
-  isComputerThinking: boolean;
-  isPaused: boolean;
   onNewGame: () => void;
-  onTogglePause: () => void;
 }
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -94,18 +86,17 @@ const messageColor: Record<MsgType, string> = {
   success: "#4ade80",
 };
 
-export function StatusBar({
-  status,
-  turn,
-  playerColor,
-  difficulty,
-  difficultyBlack,
-  gameMode,
-  isComputerThinking,
-  isPaused,
-  onNewGame,
-  onTogglePause,
-}: StatusBarProps) {
+export function StatusBar({ onNewGame }: StatusBarProps) {
+  const status = useChessStore((s) => s.status);
+  const turn = useChessStore((s) => s.turn);
+  const playerColor = useChessStore((s) => s.playerColor);
+  const difficulty = useChessStore((s) => s.difficulty);
+  const difficultyBlack = useChessStore((s) => s.difficultyBlack);
+  const gameMode = useChessStore((s) => s.gameMode);
+  const isComputerThinking = useChessStore((s) => s.isComputerThinking);
+  const isPaused = useChessStore((s) => s.isPaused);
+  const togglePause = useChessStore((s) => s.togglePause);
+
   const msg = statusMessage(status, turn, playerColor, gameMode, isComputerThinking, isPaused);
   const isOver = status === "checkmate" || status === "stalemate" || status === "draw";
   const blink = msg.type === "danger" || msg.type === "success";
@@ -151,7 +142,7 @@ export function StatusBar({
               border: "1.5px solid var(--color-border)",
               color: "var(--color-text)",
             }}
-            onClick={onTogglePause}
+            onClick={togglePause}
           >
             {isPaused ? "Resume" : "Pause"}
           </button>

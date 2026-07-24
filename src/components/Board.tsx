@@ -2,22 +2,11 @@ import type { Square } from "chess.js";
 
 import { Chess } from "chess.js";
 
-import type { LastMove, PieceColor } from "../types";
-
 import { cn } from "../lib/cn";
+import { useChessStore } from "../store/chessStore";
 import { getPieceComponent } from "./pieces";
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;
-
-interface BoardProps {
-  fen: string;
-  selectedSquare: Square | null;
-  legalMoveSquares: Square[];
-  lastMove: LastMove | null;
-  playerColor: PieceColor;
-  isComputerThinking: boolean;
-  onSquareClick: (sq: Square) => void;
-}
 
 // Build ordered square names for the board (rank 8→1 for white, rank 1→8 for black)
 function buildSquares(flipped: boolean): Square[] {
@@ -32,15 +21,15 @@ function buildSquares(flipped: boolean): Square[] {
   return squares;
 }
 
-export function Board({
-  fen,
-  selectedSquare,
-  legalMoveSquares,
-  lastMove,
-  playerColor,
-  isComputerThinking,
-  onSquareClick,
-}: BoardProps) {
+export function Board() {
+  const fen = useChessStore((s) => s.fen);
+  const selectedSquare = useChessStore((s) => s.selectedSquare);
+  const legalMoveSquares = useChessStore((s) => s.legalMoveSquares);
+  const lastMove = useChessStore((s) => s.lastMove);
+  const playerColor = useChessStore((s) => s.playerColor);
+  const isComputerThinking = useChessStore((s) => s.isComputerThinking);
+  const selectSquare = useChessStore((s) => s.selectSquare);
+
   const game = new Chess(fen);
   const flipped = playerColor === "b";
   const squares = buildSquares(flipped);
@@ -110,11 +99,11 @@ export function Board({
                 key={sq}
                 className={squareClass}
                 style={{ width: "var(--sq-size)", height: "var(--sq-size)" }}
-                onClick={() => onSquareClick(sq)}
+                onClick={() => selectSquare(sq)}
                 role="button"
                 aria-label={sq}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === "Enter" && onSquareClick(sq)}
+                onKeyDown={(e) => e.key === "Enter" && selectSquare(sq)}
               >
                 {/* hover overlay */}
                 <span className="pointer-events-none absolute inset-0 z-[4] bg-white/[0.12] opacity-0 group-hover:opacity-100" />

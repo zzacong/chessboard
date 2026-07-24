@@ -1,16 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import type { CapturedPieces, PieceColor, PieceType } from "../types";
+import type { PieceColor, PieceType } from "../types";
 
 import { cn } from "../lib/cn";
+import { useChessStore } from "../store/chessStore";
 import { getPieceComponent } from "./pieces";
-
-interface SidebarProps {
-  history: string[];
-  capturedPieces: CapturedPieces;
-  playerColor: PieceColor;
-  isComputerThinking: boolean;
-}
 
 const PIECE_VALUES_DISPLAY: Record<PieceType, number> = {
   q: 9,
@@ -68,12 +62,12 @@ function CapturedRow({
   );
 }
 
-export function Sidebar({
-  history,
-  capturedPieces,
-  playerColor,
-  isComputerThinking,
-}: SidebarProps) {
+export function Sidebar() {
+  const history = useChessStore((s) => s.history);
+  const capturedPieces = useChessStore((s) => s.capturedPieces);
+  const playerColor = useChessStore((s) => s.playerColor);
+  const isComputerThinking = useChessStore((s) => s.isComputerThinking);
+
   const historyEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to latest move
