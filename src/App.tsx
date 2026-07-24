@@ -27,31 +27,21 @@ export default function App() {
 
   return (
     <div
-      className="flex min-h-screen flex-col"
+      className="flex min-h-screen flex-col bg-bg"
       style={{
-        background: "var(--color-bg)",
         backgroundImage:
           "radial-gradient(ellipse 60% 50% at 20% 20%, rgba(30,45,82,0.4) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 80% 80%, rgba(233,69,96,0.06) 0%, transparent 60%)",
       }}
     >
       <header
-        className="sticky top-0 z-10 flex h-[52px] items-center justify-between px-6 backdrop-blur-sm"
-        style={{
-          borderBottom: "1px solid var(--color-border)",
-          background: "rgba(22,33,62,0.8)",
-        }}
+        className="sticky top-0 z-10 flex h-[52px] items-center justify-between border-b border-border px-6 backdrop-blur-sm"
+        style={{ background: "rgba(22,33,62,0.8)" }}
       >
-        <span
-          className="flex items-center gap-2 text-[17px] font-bold tracking-tight"
-          style={{ color: "var(--color-text)" }}
-        >
+        <span className="flex items-center gap-2 text-[17px] font-bold tracking-tight text-text">
           {/* accent dot */}
           <span
-            className="inline-block h-2 w-2 rounded-full"
-            style={{
-              background: "var(--color-accent)",
-              boxShadow: "0 0 8px var(--color-accent)",
-            }}
+            className="inline-block h-2 w-2 rounded-full bg-accent"
+            style={{ boxShadow: "0 0 8px var(--color-accent)" }}
           />
           Chess
         </span>

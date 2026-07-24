@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+@theme {
+  --color-bg: #0d0d1a;
+  --color-surface: #16213e;
+  --color-surface-2: #1e2d52;
+  --color-border: #2a2a4a;
+  --color-border-2: #3a3a5a;
+  --color-text: #e8e8f0;
+  --color-text-muted: #7878a0;
+  --color-accent: #e94560;
+  --color-accent-2: #f5a623;
+  --color-success: #4ade80;
+}
+
 /* ── Design tokens (still used by Board squares & keyframes) ── */
 :root {
   --color-bg: #0d0d1a;
@@ -95,15 +108,6 @@ button {
 }
 .sq-in-check {
   background-color: var(--sq-check) !important;
-}
-
-.sq-hover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.12);
-  pointer-events: none;
-  z-index: 4;
 }
 
 .legal-dot {

@@ -73,17 +73,17 @@ function statusMessage(
 }
 
 const indicatorColor: Record<MsgType, string> = {
-  normal: "#4ade80",
+  normal: "var(--color-success)",
   warning: "var(--color-accent-2)",
   danger: "var(--color-accent)",
-  success: "#4ade80",
+  success: "var(--color-success)",
 };
 
 const messageColor: Record<MsgType, string> = {
   normal: "var(--color-text)",
   warning: "var(--color-accent-2)",
   danger: "var(--color-accent)",
-  success: "#4ade80",
+  success: "var(--color-success)",
 };
 
 export function StatusBar({ onNewGame }: StatusBarProps) {
@@ -115,13 +115,7 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
   }
 
   return (
-    <div
-      className="flex w-full items-center justify-between gap-4 rounded-xl px-4 py-2.5"
-      style={{
-        background: "var(--color-surface)",
-        border: "1px solid var(--color-border)",
-      }}
-    >
+    <div className="flex w-full items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-2.5">
       <div className="flex min-w-0 items-center gap-2.5">
         <span
           className={cn("h-2 w-2 shrink-0 rounded-full", blink && "animate-blink")}
@@ -135,17 +129,10 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <span className="text-xs whitespace-nowrap" style={{ color: "var(--color-text-muted)" }}>
-          {modeChip}
-        </span>
+        <span className="text-xs whitespace-nowrap text-text-muted">{modeChip}</span>
         {canUndo && (
           <button
-            className="rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
-            style={{
-              background: "transparent",
-              border: "1.5px solid var(--color-border)",
-              color: "var(--color-text)",
-            }}
+            className="rounded-lg border border-border bg-transparent px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap text-text transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
             onClick={undoMove}
           >
             Undo
@@ -153,12 +140,7 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
         )}
         {gameMode === "computer-vs-computer" && !isOver && (
           <button
-            className="rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
-            style={{
-              background: "transparent",
-              border: "1.5px solid var(--color-border)",
-              color: "var(--color-text)",
-            }}
+            className="rounded-lg border border-border bg-transparent px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap text-text transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
             onClick={togglePause}
           >
             {isPaused ? "Resume" : "Pause"}
@@ -166,22 +148,11 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
         )}
         <button
           className={cn(
-            "rounded-lg px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5",
-            isOver && "animate-pulse-border",
-          )}
-          style={
+            "rounded-lg bg-transparent px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5",
             isOver
-              ? {
-                  background: "transparent",
-                  border: "1.5px solid var(--color-accent)",
-                  color: "var(--color-accent)",
-                }
-              : {
-                  background: "transparent",
-                  border: "1.5px solid var(--color-border)",
-                  color: "var(--color-text)",
-                }
-          }
+              ? "animate-pulse-border border border-accent text-accent"
+              : "border border-border text-text",
+          )}
           onClick={onNewGame}
         >
           New Game

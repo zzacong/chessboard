@@ -25,12 +25,9 @@ function sortedCaptured(pieces: PieceType[]): PieceType[] {
   );
 }
 
-const sectionStyle = {
-  background: "var(--color-surface)",
-  border: "1px solid var(--color-border)",
-};
-
-const sectionTitleClass = "text-[11px] font-bold uppercase tracking-[0.08em] mb-2.5";
+const sectionTitleClass = cn(
+  "mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase",
+);
 
 function CapturedRow({
   pieces,
@@ -44,19 +41,13 @@ function CapturedRow({
   const sorted = sortedCaptured(pieces);
   return (
     <div className="mb-1.5 flex items-center gap-1.5">
-      <span className="w-7 shrink-0 text-[11px]" style={{ color: "var(--color-text-muted)" }}>
-        {label}
-      </span>
+      <span className="w-7 shrink-0 text-[11px] text-text-muted">{label}</span>
       <div className="flex flex-wrap items-center gap-px">
         {sorted.map((p, i) => {
           const Comp = getPieceComponent(color, p);
           return Comp ? <Comp key={i} size={22} /> : null;
         })}
-        {pieces.length === 0 && (
-          <span className="text-xs opacity-50" style={{ color: "var(--color-text-muted)" }}>
-            —
-          </span>
-        )}
+        {pieces.length === 0 && <span className="text-xs text-text-muted opacity-50">—</span>}
       </div>
     </div>
   );
@@ -91,30 +82,20 @@ export function Sidebar() {
   return (
     <div className="flex w-[220px] min-w-[180px] flex-col gap-4">
       {/* Captured pieces */}
-      <section className="rounded-[10px] px-3.5 pt-3.5 pb-3" style={sectionStyle}>
-        <h3 className={sectionTitleClass} style={{ color: "var(--color-text-muted)" }}>
-          Captured
-        </h3>
+      <section className="rounded-[10px] border border-border bg-surface px-3.5 pt-3.5 pb-3">
+        <h3 className={sectionTitleClass}>Captured</h3>
         <CapturedRow pieces={capturedPieces[playerColor]} color={computerColor} label="You" />
         <CapturedRow pieces={capturedPieces[computerColor]} color={playerColor} label="CPU" />
         {diff !== 0 && (
-          <div
-            className="mt-1 text-right text-xs font-semibold"
-            style={{ color: "var(--color-accent-2)" }}
-          >
+          <div className="mt-1 text-right text-xs font-semibold text-accent-2">
             {diff > 0 ? `+${diff}` : diff} material
           </div>
         )}
       </section>
 
       {/* Move history */}
-      <section
-        className="flex flex-1 flex-col overflow-hidden rounded-[10px] px-3.5 pt-3.5 pb-3"
-        style={sectionStyle}
-      >
-        <h3 className={sectionTitleClass} style={{ color: "var(--color-text-muted)" }}>
-          Moves
-        </h3>
+      <section className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-border bg-surface px-3.5 pt-3.5 pb-3">
+        <h3 className={sectionTitleClass}>Moves</h3>
         <div
           className="flex max-h-[380px] flex-col gap-0.5 overflow-y-auto"
           style={{
@@ -123,9 +104,7 @@ export function Sidebar() {
           }}
         >
           {paired.length === 0 && (
-            <span className="text-xs opacity-50" style={{ color: "var(--color-text-muted)" }}>
-              No moves yet
-            </span>
+            <span className="text-xs text-text-muted opacity-50">No moves yet</span>
           )}
           {paired.map(([white, black], idx) => (
             <div
@@ -136,22 +115,17 @@ export function Sidebar() {
               )}
               style={{ gridTemplateColumns: "28px 1fr 1fr" }}
             >
-              <span
-                className="pr-1 text-right text-[11px]"
-                style={{ color: "var(--color-text-muted)" }}
-              >
-                {idx + 1}.
-              </span>
+              <span className="pr-1 text-right text-[11px] text-text-muted">{idx + 1}.</span>
               <span
                 className="rounded-[3px] px-1.5 py-0.5 font-mono text-[13px]"
-                style={{ color: "#f0d9b5" }}
+                style={{ color: "var(--sq-light)" }}
               >
                 {white}
               </span>
               {black && (
                 <span
                   className="rounded-[3px] px-1.5 py-0.5 font-mono text-[13px]"
-                  style={{ color: "#b58863" }}
+                  style={{ color: "var(--sq-dark)" }}
                 >
                   {black}
                 </span>
@@ -160,10 +134,7 @@ export function Sidebar() {
           ))}
           {isComputerThinking && (
             <div className="px-1 py-1">
-              <span
-                className="animate-pulse-opacity text-xs italic"
-                style={{ color: "var(--color-text-muted)" }}
-              >
+              <span className="animate-pulse-opacity text-xs text-text-muted italic">
                 CPU thinking…
               </span>
             </div>

@@ -41,19 +41,14 @@ export function Board() {
     : ["8", "7", "6", "5", "4", "3", "2", "1"];
 
   return (
-    <div
-      className={`flex items-start gap-1 select-none${isComputerThinking ? " cursor-wait" : ""}`}
-    >
+    <div className={cn("flex items-start gap-1 select-none", isComputerThinking && "cursor-wait")}>
       {/* Rank labels left */}
       <div className="flex flex-col" style={{ height: "calc(var(--sq-size) * 8)" }}>
         {rankLabels.map((r) => (
           <span
             key={r}
-            className="flex w-5 items-center justify-center text-[11px] font-bold tracking-wide"
-            style={{
-              height: "var(--sq-size)",
-              color: "var(--color-text-muted)",
-            }}
+            className="flex w-5 items-center justify-center text-[11px] font-bold tracking-wide text-text-muted"
+            style={{ height: "var(--sq-size)" }}
           >
             {r}
           </span>
@@ -87,7 +82,7 @@ export function Board() {
             const PieceComp = piece ? getPieceComponent(piece.color, piece.type) : null;
 
             const squareClass = cn(
-              "group hover:sq-hover relative flex cursor-pointer items-center justify-center",
+              "group relative flex cursor-pointer items-center justify-center",
               isLight ? "sq-light" : "sq-dark",
               isSelected && "sq-selected",
               (isLastFrom || isLastTo) && "sq-last-move",
@@ -136,11 +131,8 @@ export function Board() {
           {fileLabels.map((f) => (
             <span
               key={f}
-              className="flex items-center justify-center text-[11px] font-bold tracking-[0.04em]"
-              style={{
-                width: "var(--sq-size)",
-                color: "var(--color-text-muted)",
-              }}
+              className="flex items-center justify-center text-[11px] font-bold tracking-[0.04em] text-text-muted"
+              style={{ width: "var(--sq-size)" }}
             >
               {f}
             </span>
