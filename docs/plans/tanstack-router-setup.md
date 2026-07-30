@@ -40,7 +40,7 @@ route types automatically from the file system.
 - `vite.config.ts` — add the plugin here
 - `package.json` — tracks the new packages
 
-**Status** — `[ ] pending`
+**Status** — `[x] done`
 
 ---
 
@@ -83,7 +83,7 @@ file system to URL segments. A root layout wraps both routes.
 set` — or, simpler, add a boolean `gameStarted` flag to the Zustand store.
 - `src/App.tsx` — the game UI markup lives here and will move to `game.tsx`.
 
-**Status** — `[ ] pending`
+**Status** — `[x] done`
 
 ---
 
@@ -120,7 +120,7 @@ remains.
 - `src/App.tsx` — to be deleted
 - `tsconfig.app.json` — `"include": ["src"]` already covers `routeTree.gen.ts`
 
-**Status** — `[ ] pending`
+**Status** — `[x] done`
 
 ---
 
@@ -154,4 +154,4 @@ field that `resetGame` sets to `true` and that can be read synchronously in
 files), so the guard can reference the flag. Ordering in the implementation
 should be: 4 → 2 → 1 → 3.
 
-**Status** — `[ ] pending`
+**Status** — `[x] done`
