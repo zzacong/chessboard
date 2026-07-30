@@ -15,6 +15,8 @@ import type {
   PieceType,
 } from "@/types";
 
+import { getMinimax } from "@/lib/engine/v1/minimaxEngine";
+import { getStockfish } from "@/lib/engine/v2/stockfish";
 import { DEPTH_MAP, SKILL_MAP } from "@/types";
 
 // ── Module-level non-reactive state ──────────────────────────────────────────
@@ -22,27 +24,8 @@ import { DEPTH_MAP, SKILL_MAP } from "@/types";
 
 let game = new Chess();
 
-let workerV1: Worker | null = null;
-let workerV2: Worker | null = null;
-
 let msgId = 0;
 let pendingMsgId = -1;
-
-// Stockfish communicates through UCI strings, not JSON objects.
-// A search must be handled sequentially because Stockfish's `bestmove` response
-// does not include an application-level request ID.
-let stockfishReady = false;
-let stockfishBusy = false;
-let stockfishStopRequested = false;
-let stockfishActiveId = -1;
-
-interface StockfishSearch {
-  id: number;
-  fen: string;
-  skillLevel: number;
-}
-
-let queuedStockfishSearch: StockfishSearch | null = null;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -79,84 +62,6 @@ function parseUciMove(move: string): {
     to: match[2] as Square,
     promotion: match[3] as "q" | "r" | "b" | "n" | undefined,
   };
-}
-
-function initWorkerV1() {
-  if (workerV1) return;
-
-  workerV1 = new Worker(new URL("../lib/engine/v1/minimaxWorker.ts", import.meta.url), {
-    type: "module",
-  });
-
-  workerV1.onmessage = handleMinimaxWorkerMessage;
-
-  workerV1.onerror = (event) => {
-    console.error("Minimax worker error:", event);
-    chessStore.setState({ isComputerThinking: false });
-  };
-}
-
-function initWorkerV2() {
-  if (workerV2) return;
-
-  workerV2 = createStockfishWorker();
-
-  workerV2.onmessage = handleStockfishMessage;
-
-  workerV2.onerror = (event) => {
-    console.error("Stockfish worker error:", event);
-
-    stockfishBusy = false;
-    stockfishReady = false;
-    stockfishActiveId = -1;
-
-    chessStore.setState({ isComputerThinking: false });
-  };
-
-  // Start the Stockfish UCI handshake.
-  workerV2.postMessage("uci");
-}
-
-function stopStockfish() {
-  queuedStockfishSearch = null;
-
-  if (stockfishBusy && !stockfishStopRequested) {
-    stockfishStopRequested = true;
-    workerV2?.postMessage("stop");
-  }
-}
-
-function startQueuedStockfishSearch() {
-  if (!workerV2 || !stockfishReady || stockfishBusy) return;
-
-  const search = queuedStockfishSearch;
-  if (!search) return;
-
-  queuedStockfishSearch = null;
-  stockfishBusy = true;
-  stockfishStopRequested = false;
-  stockfishActiveId = search.id;
-
-  workerV2.postMessage(`setoption name Skill Level value ${search.skillLevel}`);
-  workerV2.postMessage(`position fen ${search.fen}`);
-  workerV2.postMessage("go depth 12");
-}
-
-function requestStockfishMove(search: StockfishSearch) {
-  initWorkerV2();
-
-  queuedStockfishSearch = search;
-
-  if (stockfishBusy) {
-    if (!stockfishStopRequested) {
-      stockfishStopRequested = true;
-      workerV2?.postMessage("stop");
-    }
-
-    return;
-  }
-
-  startQueuedStockfishSearch();
 }
 
 // ── Store types ───────────────────────────────────────────────────────────────
@@ -259,24 +164,39 @@ const chessStore = createStore<ChessStore>()(
         const activeDifficulty = game.turn() === "b" ? currentDifficultyBlack : currentDifficulty;
 
         if (engineVersion === "v2") {
-          requestStockfishMove({
-            id,
-            fen: game.fen(),
-            skillLevel: SKILL_MAP[activeDifficulty],
-          });
-
+          getStockfish()
+            .getBestMove(game.fen(), { skillLevel: SKILL_MAP[activeDifficulty] })
+            .then((bestMove) => {
+              if (id !== pendingMsgId) return;
+              if (bestMove) {
+                applyComputerMove(bestMove, id);
+              } else {
+                chessStore.setState({ isComputerThinking: false });
+              }
+            })
+            .catch((err: unknown) => {
+              if (id !== pendingMsgId) return;
+              console.error("Stockfish error:", err);
+              chessStore.setState({ isComputerThinking: false });
+            });
           return;
         }
 
-        initWorkerV1();
-
-        const depth = DEPTH_MAP[activeDifficulty];
-
-        workerV1?.postMessage({
-          fen: game.fen(),
-          depth,
-          id,
-        });
+        getMinimax()
+          .getBestMove(game.fen(), DEPTH_MAP[activeDifficulty], id)
+          .then((bestMove) => {
+            if (id !== pendingMsgId) return;
+            if (bestMove) {
+              applyComputerMove(bestMove, id);
+            } else {
+              chessStore.setState({ isComputerThinking: false });
+            }
+          })
+          .catch((err: unknown) => {
+            if (id !== pendingMsgId) return;
+            console.error("Minimax error:", err);
+            chessStore.setState({ isComputerThinking: false });
+          });
       },
 
       selectSquare: (sq) => {
@@ -355,14 +275,10 @@ const chessStore = createStore<ChessStore>()(
 
       resetGame: (color, diff, mode, diffBlack = "medium", engVersion = "v1") => {
         pendingMsgId = ++msgId;
-        stopStockfish();
+        getStockfish().cancelSearch();
 
         game = new Chess();
-
-        if (stockfishReady) {
-          workerV2?.postMessage("ucinewgame");
-          workerV2?.postMessage("isready");
-        }
+        getStockfish().newGame();
 
         set({
           playerColor: color,
@@ -404,7 +320,7 @@ const chessStore = createStore<ChessStore>()(
         if (isComputerThinking) return;
 
         pendingMsgId = ++msgId;
-        stopStockfish();
+        getStockfish().cancelSearch();
 
         const plies = gameMode === "vs-computer" ? 2 : 1;
 
@@ -446,7 +362,7 @@ const chessStore = createStore<ChessStore>()(
 
         if (nowPaused) {
           pendingMsgId = ++msgId;
-          stopStockfish();
+          getStockfish().cancelSearch();
           set({ isComputerThinking: false });
           return;
         }
@@ -514,73 +430,6 @@ function applyComputerMove(bestMove: string, id: number) {
 
   chessStore.getState().syncState();
   scheduleNextComputerMove();
-}
-
-// ── V1 minimax worker ─────────────────────────────────────────────────────────
-
-interface MinimaxWorkerResponse {
-  bestMove: string;
-  id: number;
-}
-
-function handleMinimaxWorkerMessage(event: MessageEvent<MinimaxWorkerResponse>) {
-  const { bestMove, id } = event.data;
-
-  if (id !== pendingMsgId) return;
-
-  if (!bestMove) {
-    chessStore.setState({ isComputerThinking: false });
-    return;
-  }
-
-  applyComputerMove(bestMove, id);
-}
-
-// ── V2 Stockfish UCI worker ───────────────────────────────────────────────────
-
-function handleStockfishMessage(event: MessageEvent<string>) {
-  const line = String(event.data).trim();
-
-  // Enable this while debugging Stockfish startup/network problems.
-  // console.debug("[Stockfish]", line);
-
-  if (line === "uciok") {
-    workerV2?.postMessage("isready");
-    return;
-  }
-
-  if (line === "readyok") {
-    stockfishReady = true;
-    startQueuedStockfishSearch();
-    return;
-  }
-
-  if (!line.startsWith("bestmove")) return;
-
-  const activeId = stockfishActiveId;
-  const bestMove = line.split(/\s+/)[1];
-
-  stockfishBusy = false;
-  stockfishStopRequested = false;
-  stockfishActiveId = -1;
-
-  // `bestmove (none)` is possible in terminal positions.
-  if (bestMove && bestMove !== "(none)") {
-    applyComputerMove(bestMove, activeId);
-  } else if (activeId === pendingMsgId) {
-    chessStore.setState({ isComputerThinking: false });
-  }
-
-  // If a newer request came in while Stockfish was searching, start it now.
-  startQueuedStockfishSearch();
-}
-
-function createStockfishWorker(): Worker {
-  const baseUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
-  const workerUrl = new URL("stockfish/stockfish-18-lite-single.js", baseUrl);
-  const wasmUrl = new URL("stockfish/stockfish-18-lite-single.wasm", baseUrl);
-  workerUrl.hash = encodeURIComponent(wasmUrl.href);
-  return new Worker(workerUrl);
 }
 
 // ── React hook ────────────────────────────────────────────────────────────────
