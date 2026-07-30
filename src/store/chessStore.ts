@@ -7,6 +7,7 @@ import { devtools } from "zustand/middleware";
 import type {
   CapturedPieces,
   Difficulty,
+  EngineVersion,
   GameMode,
   GameStatus,
   LastMove,
@@ -14,12 +15,13 @@ import type {
   PieceType,
 } from "@/types";
 
-import { DEPTH_MAP } from "@/types";
+import { DEPTH_MAP, SKILL_MAP } from "@/types";
 
 // ── Module-level non-reactive state ──────────────────────────────────────────
 // These don't need to trigger re-renders so they live outside Zustand.
 let game = new Chess();
-let worker: Worker | null = null;
+let workerV1: Worker | null = null;
+let workerV2: Worker | null = null;
 let msgId = 0;
 let pendingMsgId = -1;
 
@@ -57,6 +59,7 @@ interface ChessState {
   difficulty: Difficulty;
   difficultyBlack: Difficulty;
   gameMode: GameMode;
+  engineVersion: EngineVersion;
   isComputerThinking: boolean;
   isPaused: boolean;
   gameStarted: boolean;
@@ -76,6 +79,7 @@ interface ChessActions {
     difficulty: Difficulty,
     mode: GameMode,
     difficultyBlack?: Difficulty,
+    engineVersion?: EngineVersion,
   ) => void;
   togglePause: () => void;
   undoMove: () => void;
@@ -100,6 +104,7 @@ const chessStore = createStore<ChessStore>()(
       difficulty: "medium",
       difficultyBlack: "medium",
       gameMode: "vs-computer",
+      engineVersion: "v1",
       isComputerThinking: false,
       isPaused: false,
       gameStarted: false,
@@ -125,13 +130,20 @@ const chessStore = createStore<ChessStore>()(
         if (game.isGameOver()) return;
         if (currentMode === "vs-computer" && game.turn() === currentPlayerColor) return;
 
-        const depth =
-          game.turn() === "b" ? DEPTH_MAP[currentDifficultyBlack] : DEPTH_MAP[currentDifficulty];
-
         set({ isComputerThinking: true });
         const id = ++msgId;
         pendingMsgId = id;
-        worker?.postMessage({ fen: game.fen(), depth, id });
+
+        const { engineVersion } = get();
+        if (engineVersion === "v2") {
+          const skillLevel =
+            game.turn() === "b" ? SKILL_MAP[currentDifficultyBlack] : SKILL_MAP[currentDifficulty];
+          workerV2?.postMessage({ fen: game.fen(), skillLevel, id });
+        } else {
+          const depth =
+            game.turn() === "b" ? DEPTH_MAP[currentDifficultyBlack] : DEPTH_MAP[currentDifficulty];
+          workerV1?.postMessage({ fen: game.fen(), depth, id });
+        }
       },
 
       // ── selectSquare ────────────────────────────────────────────────────────
@@ -186,7 +198,7 @@ const chessStore = createStore<ChessStore>()(
       },
 
       // ── resetGame ───────────────────────────────────────────────────────────
-      resetGame: (color, diff, mode, diffBlack = "medium") => {
+      resetGame: (color, diff, mode, diffBlack = "medium", engVersion = "v1") => {
         pendingMsgId = ++msgId;
         game = new Chess();
 
@@ -195,6 +207,7 @@ const chessStore = createStore<ChessStore>()(
           difficulty: diff,
           difficultyBlack: diffBlack,
           gameMode: mode,
+          engineVersion: engVersion,
           selectedSquare: null,
           legalMoveSquares: [],
           lastMove: null,
@@ -265,9 +278,7 @@ const chessStore = createStore<ChessStore>()(
 );
 
 // ── Worker bootstrap (once at module load) ────────────────────────────────────
-worker = new Worker(new URL("../lib/engine/chessWorker.ts", import.meta.url), { type: "module" });
-
-worker.onmessage = (e: MessageEvent<{ bestMove: string; id: number }>) => {
+function handleWorkerMessage(e: MessageEvent<{ bestMove: string; id: number }>) {
   const { bestMove, id } = e.data;
   if (id !== pendingMsgId) return;
 
@@ -294,7 +305,15 @@ worker.onmessage = (e: MessageEvent<{ bestMove: string; id: number }>) => {
       triggerComputerMove("w", difficulty, nextDiff, gameMode);
     }, 150);
   }
-};
+}
+
+workerV1 = new Worker(new URL("../lib/engine/v1/minimaxWorker.ts", import.meta.url), {
+  type: "module",
+});
+workerV1.onmessage = handleWorkerMessage;
+
+workerV2 = new Worker("/stockfish-worker.js");
+workerV2.onmessage = handleWorkerMessage;
 
 // ── React hook ────────────────────────────────────────────────────────────────
 export function useChessStore<T>(selector: (state: ChessStore) => T): T {

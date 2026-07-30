@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
-import type { Difficulty, GameMode, PieceColor } from "@/types";
+import type { Difficulty, EngineVersion, GameMode, PieceColor } from "@/types";
 
 import { cn } from "@/lib/cn";
 import { useChessStore } from "@/store/chessStore";
@@ -9,6 +9,11 @@ import { useChessStore } from "@/store/chessStore";
 export const Route = createFileRoute("/")({
   component: IndexPage,
 });
+
+const ENGINES: { value: EngineVersion; label: string; icon: string; desc: string }[] = [
+  { value: "v1", label: "Minimax", icon: "🧮", desc: "v1 — Classic AI" },
+  { value: "v2", label: "Stockfish", icon: "⚡", desc: "v2 — Real Engine" },
+];
 
 const MODES: { value: GameMode; label: string; icon: string }[] = [
   { value: "vs-computer", label: "vs Computer", icon: "🤖" },
@@ -21,19 +26,33 @@ const COLORS: { value: PieceColor; label: string; symbol: string }[] = [
   { value: "b", label: "Black", symbol: "♚" },
 ];
 
-const DIFFICULTIES: { value: Difficulty; label: string; desc: string }[] = [
-  { value: "easy", label: "Easy", desc: "Depth 1" },
-  { value: "medium", label: "Medium", desc: "Depth 3" },
-  { value: "hard", label: "Hard", desc: "Depth 5" },
+const DIFFICULTIES: { value: Difficulty; label: string }[] = [
+  { value: "easy", label: "Easy" },
+  { value: "medium", label: "Medium" },
+  { value: "hard", label: "Hard" },
 ];
+
+const DEPTH_DESCS: Record<Difficulty, string> = {
+  easy: "Depth 1",
+  medium: "Depth 3",
+  hard: "Depth 5",
+};
+const SKILL_DESCS: Record<Difficulty, string> = {
+  easy: "Skill 3",
+  medium: "Skill 10",
+  hard: "Skill 20",
+};
 
 function DifficultyPicker({
   selected,
   onChange,
+  engineVersion,
 }: {
   selected: Difficulty;
   onChange: (d: Difficulty) => void;
+  engineVersion: EngineVersion;
 }) {
+  const descs = engineVersion === "v2" ? SKILL_DESCS : DEPTH_DESCS;
   return (
     <div className="flex gap-2.5">
       {DIFFICULTIES.map((d) => (
@@ -48,7 +67,7 @@ function DifficultyPicker({
           onClick={() => onChange(d.value)}
         >
           <span className="text-sm font-semibold">{d.label}</span>
-          <span className="text-[11px] text-text-muted">{d.desc}</span>
+          <span className="text-[11px] text-text-muted">{descs[d.value]}</span>
         </button>
       ))}
     </div>
@@ -59,6 +78,7 @@ function IndexPage() {
   const resetGame = useChessStore((s) => s.resetGame);
   const router = useRouter();
 
+  const [engineVersion, setEngineVersion] = useState<EngineVersion>("v1");
   const [gameMode, setGameMode] = useState<GameMode>("vs-computer");
   const [color, setColor] = useState<PieceColor>("w");
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
@@ -67,7 +87,7 @@ function IndexPage() {
   const isCvC = gameMode === "computer-vs-computer";
 
   function handleStart() {
-    resetGame(color, difficulty, gameMode, difficultyBlack);
+    resetGame(color, difficulty, gameMode, difficultyBlack, engineVersion);
     void router.navigate({ to: "/game" });
   }
 
@@ -79,6 +99,31 @@ function IndexPage() {
       >
         <div className="mb-2 text-[56px] leading-none">♟</div>
         <h1 className="mb-6 text-[32px] font-bold tracking-tight text-text">Chess</h1>
+
+        {/* Engine */}
+        <section className="mb-7 text-left">
+          <h2 className="mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase">
+            Engine
+          </h2>
+          <div className="flex gap-2.5">
+            {ENGINES.map((e) => (
+              <button
+                key={e.value}
+                className={cn(
+                  "flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 text-sm font-medium transition-[border-color,background] duration-150",
+                  engineVersion === e.value
+                    ? "border-accent bg-accent/10 text-white"
+                    : "border-border bg-bg text-text",
+                )}
+                onClick={() => setEngineVersion(e.value)}
+              >
+                <span className="text-[28px] leading-none">{e.icon}</span>
+                <span>{e.label}</span>
+                <span className="text-[11px] text-text-muted">{e.desc}</span>
+              </button>
+            ))}
+          </div>
+        </section>
 
         {/* Game Mode */}
         <section className="mb-7 text-left">
@@ -136,7 +181,11 @@ function IndexPage() {
             <h2 className="mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase">
               Difficulty
             </h2>
-            <DifficultyPicker selected={difficulty} onChange={setDifficulty} />
+            <DifficultyPicker
+              selected={difficulty}
+              onChange={setDifficulty}
+              engineVersion={engineVersion}
+            />
           </section>
         )}
 
@@ -147,13 +196,21 @@ function IndexPage() {
               <h2 className="mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase">
                 White difficulty ♔
               </h2>
-              <DifficultyPicker selected={difficulty} onChange={setDifficulty} />
+              <DifficultyPicker
+                selected={difficulty}
+                onChange={setDifficulty}
+                engineVersion={engineVersion}
+              />
             </div>
             <div>
               <h2 className="mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase">
                 Black difficulty ♚
               </h2>
-              <DifficultyPicker selected={difficultyBlack} onChange={setDifficultyBlack} />
+              <DifficultyPicker
+                selected={difficultyBlack}
+                onChange={setDifficultyBlack}
+                engineVersion={engineVersion}
+              />
             </div>
           </section>
         )}
