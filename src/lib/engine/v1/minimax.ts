@@ -143,7 +143,7 @@ function minimax(
 
 export function getBestMove(fen: string, depth: number): string {
   const game = new Chess(fen);
-  const moves = game.moves();
+  const moves = game.moves({ verbose: true });
   if (moves.length === 0) return "";
 
   const isMaximising = game.turn() === "w";
@@ -160,5 +160,7 @@ export function getBestMove(fen: string, depth: number): string {
     }
   }
 
-  return bestMove;
+  // Return UCI format (e.g. "e2e4") so applyComputerMove can parse it.
+  const promotion = bestMove.promotion ? bestMove.promotion : "";
+  return `${bestMove.from}${bestMove.to}${promotion}`;
 }

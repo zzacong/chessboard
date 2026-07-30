@@ -14,10 +14,12 @@ describe("getBestMove", () => {
     expect(move.length).toBeGreaterThan(0);
   });
 
-  it("returns a valid SAN move that chess.js can execute", () => {
+  it("returns a valid UCI move that chess.js can execute", () => {
     const game = new Chess();
     const move = getBestMove(game.fen(), 1);
-    expect(() => game.move(move)).not.toThrow();
+    // getBestMove returns UCI format (e.g. "e2e4"); chess.js accepts it via { from, to }
+    expect(move).toMatch(/^[a-h][1-8][a-h][1-8][qrbn]?$/);
+    expect(() => game.move({ from: move.slice(0, 2), to: move.slice(2, 4) })).not.toThrow();
   });
 
   it("returns empty string when there are no legal moves (stalemate/checkmate)", () => {
@@ -31,14 +33,16 @@ describe("getBestMove", () => {
 
   it("finds Qxf7# in Scholar's mate threat position (depth 1)", () => {
     const move = getBestMove(SCHOLARS_MATE_THREAT_FEN, 1);
-    expect(move).toBe("Qxf7#");
+    // UCI equivalent of Qxf7# is h5f7
+    expect(move).toBe("h5f7");
   });
 
   it("returns a legal move at depth 2", () => {
     const game = new Chess();
     const fen = game.fen();
     const move = getBestMove(fen, 2);
-    expect(() => game.move(move)).not.toThrow();
+    expect(move).toMatch(/^[a-h][1-8][a-h][1-8][qrbn]?$/);
+    expect(() => game.move({ from: move.slice(0, 2), to: move.slice(2, 4) })).not.toThrow();
   });
 
   it("prefers capturing a queen over a pawn when both are available", () => {
@@ -46,8 +50,8 @@ describe("getBestMove", () => {
     // Position: white rook on d1, black queen on d5, black pawn on d6 — white rook captures queen
     const fen = "k7/8/3p4/3q4/8/8/8/K2R4 w - - 0 1";
     const move = getBestMove(fen, 1);
-    // Rd5 captures the queen (Rxd5 or Rxd5+)
-    expect(move).toMatch(/Rxd5/);
+    // UCI equivalent of Rxd5: rook on d1 captures queen on d5
+    expect(move).toBe("d1d5");
   });
 });
 
@@ -58,8 +62,10 @@ describe("getBestMove – board evaluation sanity", () => {
     game.move("e4");
     const blackFen = game.fen();
     const blackMove = getBestMove(blackFen, 1);
-    expect(blackMove.length).toBeGreaterThan(0);
-    // Make sure chess.js accepts the move as black
-    expect(() => game.move(blackMove)).not.toThrow();
+    expect(blackMove).toMatch(/^[a-h][1-8][a-h][1-8][qrbn]?$/);
+    // Make sure chess.js accepts the UCI move as black
+    expect(() =>
+      game.move({ from: blackMove.slice(0, 2), to: blackMove.slice(2, 4) }),
+    ).not.toThrow();
   });
 });
