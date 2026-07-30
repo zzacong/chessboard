@@ -59,6 +59,7 @@ interface ChessState {
   gameMode: GameMode;
   isComputerThinking: boolean;
   isPaused: boolean;
+  gameStarted: boolean;
 }
 
 interface ChessActions {
@@ -101,6 +102,7 @@ const chessStore = createStore<ChessStore>()(
       gameMode: "vs-computer",
       isComputerThinking: false,
       isPaused: false,
+      gameStarted: false,
 
       // ── syncState ───────────────────────────────────────────────────────────
       syncState: () => {
@@ -203,6 +205,7 @@ const chessStore = createStore<ChessStore>()(
           status: "playing",
           history: [],
           capturedPieces: { w: [], b: [] },
+          gameStarted: true,
         });
 
         if (mode === "computer-vs-computer") {
@@ -296,4 +299,9 @@ worker.onmessage = (e: MessageEvent<{ bestMove: string; id: number }>) => {
 // ── React hook ────────────────────────────────────────────────────────────────
 export function useChessStore<T>(selector: (state: ChessStore) => T): T {
   return useStore(chessStore, selector);
+}
+
+// ── Snapshot accessor (for use outside React, e.g. route guards) ──────────────
+export function getChessState(): ChessStore {
+  return chessStore.getState();
 }

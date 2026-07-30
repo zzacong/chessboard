@@ -1,28 +1,25 @@
-import { useState } from "react";
-
-import type { Difficulty, GameMode, PieceColor } from "@/types";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 
 import { Board } from "@/components/Board";
-import { SetupScreen } from "@/components/SetupScreen";
 import { Sidebar } from "@/components/Sidebar";
 import { StatusBar } from "@/components/StatusBar";
-import { useChessStore } from "@/store/chessStore";
+import { getChessState } from "@/store/chessStore";
 
-export default function App() {
-  const [gameStarted, setGameStarted] = useState(false);
-  const resetGame = useChessStore((s) => s.resetGame);
+export const Route = createFileRoute("/game")({
+  beforeLoad: () => {
+    const { gameStarted } = getChessState();
+    if (!gameStarted) {
+      throw redirect({ to: "/" });
+    }
+  },
+  component: GamePage,
+});
 
-  function handleStart(color: PieceColor, diff: Difficulty, mode: GameMode, diffBlack: Difficulty) {
-    resetGame(color, diff, mode, diffBlack);
-    setGameStarted(true);
-  }
+function GamePage() {
+  const router = useRouter();
 
   function handleNewGame() {
-    setGameStarted(false);
-  }
-
-  if (!gameStarted) {
-    return <SetupScreen onStart={handleStart} />;
+    void router.navigate({ to: "/" });
   }
 
   return (
@@ -38,7 +35,6 @@ export default function App() {
         style={{ background: "rgba(22,33,62,0.8)" }}
       >
         <span className="flex items-center gap-2 text-[17px] font-bold tracking-tight text-text">
-          {/* accent dot */}
           <span
             className="inline-block h-2 w-2 rounded-full bg-accent"
             style={{ boxShadow: "0 0 8px var(--color-accent)" }}
