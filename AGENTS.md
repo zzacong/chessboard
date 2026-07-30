@@ -51,9 +51,10 @@ Within components, type imports from `chess.js` precede value imports; internal 
 - **`cn()` utility** — always use `src/lib/cn.ts` (clsx + tailwind-merge) for conditional class names. oxfmt sorts Tailwind classes inside `cn()` and `clsx()` calls automatically against `src/index.css`.
 - **CSS custom properties for board sizing** — board square dimensions are driven by `--sq-size` / `--board-size` CSS variables defined in `src/index.css`; use `style={{ width: "var(--sq-size)" }}` rather than Tailwind for anything that depends on these tokens.
 - **Board square classes live in `src/index.css`** — `sq-light`, `sq-dark`, `sq-selected`, `sq-last-move`, `sq-in-check`, `legal-dot`, `legal-ring`, `animate-blink`, `animate-pulse-border`, `animate-pulse-opacity` are plain CSS classes (not Tailwind utilities) because Tailwind can't express dynamic CSS-var values.
-- **Web Worker** — the AI engine runs in `src/lib/engine/chessWorker.ts`. The worker is spawned **once at store module load** (not inside a React effect) in `src/store/chessStore.ts`. Vite handles this natively (`worker.format: "es"` in `vite.config.ts`). Only one message is in-flight at a time; stale responses are discarded via module-level `msgId` / `pendingMsgId` counters.
-- **Zustand store** — all game state lives in `src/store/chessStore.ts`. The Chess.js instance (`game`), worker reference, and `msgId`/`pendingMsgId` counters are module-level variables (not Zustand state) because they don't need to trigger re-renders. Use `useChessStore` (React hook) or `getChessState()` (outside React, e.g. route guards) to read state.
-- **TanStack Router** — routing is file-based under `src/routes/`. Route types are auto-generated into `src/routeTree.gen.ts` by the `@tanstack/router-plugin` Vite plugin on `pnpm dev`. The `/game` route has a `beforeLoad` guard that calls `getChessState().gameStarted` and redirects to `/` if the game has not been started.
+- **Engine layer** — two engine implementations exist side-by-side: `src/lib/engine/v1/minimaxEngine.ts` (minimax, web worker) and `src/lib/engine/v2/stockfish.ts` (Stockfish UCI, web worker). Each exposes a singleton getter (`getMinimax()` / `getStockfish()`). They do **not** yet share a common interface — normalisation is tracked in `docs/plans/engine-interface-normalisation.md`.
+- **Web Workers** — the minimax engine spawns its worker via `new Worker(new URL('./minimaxWorker.ts', import.meta.url), { type: 'module' })` inside `MinimaxEngine`; Stockfish loads a pre-built JS blob from `public/stockfish/`. Workers are instantiated lazily on first call to the singleton getter. Only one message is in-flight at a time; stale responses are discarded via module-level `msgId` / `pendingMsgId` counters in the store.
+- **Zustand store** — all game state lives in `src/store/chessStore.ts`. The Chess.js instance (`game`) and `msgId`/`pendingMsgId` counters are module-level variables (not Zustand state) because they don't need to trigger re-renders. Use `useChessStore` (React hook) or `getChessState()` (outside React, e.g. route guards) to read state.
+- **TanStack Router** — routing is file-based under `src/routes/`. Route types are auto-generated into `src/routeTree.gen.ts` by the `@tanstack/router-plugin` Vite plugin on `pnpm dev`. Both `/v1/game` and `/v2/game` have a `beforeLoad` guard that checks `getChessState().gameStarted` and redirects to `/` if the game has not been started.
 - **Path aliases** — `@/` maps to `src/` (configured via `resolve.tsconfigPaths` in `vite.config.ts`). Always use `@/` for non-relative imports within `src/`.
 - **`verbatimModuleSyntax: true`** — all type-only imports must use `import type { ... }`, not `import { type ... }`.
 - **`erasableSyntaxOnly: true`** — TypeScript `enum` and namespace declarations are forbidden; use `const` object maps instead (see `DEPTH_MAP` in `src/types.ts`).
@@ -64,20 +65,24 @@ Within components, type imports from `chess.js` precede value imports; internal 
 ```
 main.tsx
   └─ RouterProvider
-       ├─ src/routes/__root.tsx   (root layout — <Outlet />)
-       ├─ src/routes/index.tsx    (/ — setup UI: mode/color/difficulty pickers)
-       └─ src/routes/game.tsx     (/game — game UI; beforeLoad guard → redirects to / if !gameStarted)
+       ├─ src/routes/__root.tsx      (root layout — <Outlet />)
+       ├─ src/routes/index.tsx       (/ — setup UI: engine/mode/color/difficulty pickers)
+       ├─ src/routes/v1/game.tsx     (/v1/game — Minimax; beforeLoad guard → redirects to / if !gameStarted)
+       └─ src/routes/v2/game.tsx     (/v2/game — Stockfish; beforeLoad guard → redirects to / if !gameStarted)
                 │
-                └─ useChessStore (src/store/chessStore.ts)  ←── chessWorker (src/lib/engine/)
-                        │                                              │
-                        ├─ Board.tsx                                  └─ minimax.ts
-                        ├─ Sidebar.tsx
-                        └─ StatusBar.tsx
+                └─ GameLayout (src/components/GameLayout.tsx)  ←── useChessStore (src/store/chessStore.ts)
+                        │                                                    │
+                        ├─ Board.tsx                          ┌──────────────┴──────────────┐
+                        ├─ Sidebar.tsx                  v1/minimaxEngine.ts        v2/stockfish.ts
+                        └─ StatusBar.tsx                      │
+                                                        v1/minimaxWorker.ts
+                                                        v1/minimax.ts
 ```
 
 - All game state lives in the Zustand store (`src/store/chessStore.ts`); components subscribe directly to the slices they need via `useChessStore(selector)`.
-- `src/routes/index.tsx` owns the full setup UI (mode, color, difficulty pickers). It calls `resetGame(...)` from the store on start and navigates to `/game`.
-- `src/routes/game.tsx` owns the game UI (header + board + sidebar) and exposes a "New Game" action that navigates back to `/`.
+- `src/routes/index.tsx` owns the full setup UI (engine version, mode, color, difficulty pickers). On start it calls `resetGame(...)` then navigates to `/v1/game` or `/v2/game` depending on the chosen engine.
+- `GameLayout` (`src/components/GameLayout.tsx`) is the shared game UI shell (header, board, sidebar). It receives a `badge` string (e.g. `"v1 · Minimax"`) from the route component and exposes a "New Game" action that navigates back to `/`.
 - `src/routeTree.gen.ts` is generated automatically — do not edit by hand.
-- `src/types.ts` is the single source of truth for shared types and constants (`DEPTH_MAP`, `GameStatus`, etc.).
+- `src/types.ts` is the single source of truth for shared types and constants (`DEPTH_MAP`, `SKILL_MAP`, `GameStatus`, etc.).
 - Pawn promotion is always auto-promoted to queen (`promotion: "q"`).
+- Engine normalisation is in progress — see `docs/plans/engine-interface-normalisation.md` for the plan to introduce a shared `Engine` interface, a `getEngine(version)` factory, and remove the `if (engineVersion === "v2")` branch in the store.
