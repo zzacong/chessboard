@@ -100,31 +100,6 @@ function IndexPage() {
         <div className="mb-2 text-[56px] leading-none">♟</div>
         <h1 className="mb-6 text-[32px] font-bold tracking-tight text-text">Chess</h1>
 
-        {/* Engine */}
-        <section className="mb-7 text-left">
-          <h2 className="mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase">
-            Engine
-          </h2>
-          <div className="flex gap-2.5">
-            {ENGINES.map((e) => (
-              <button
-                key={e.value}
-                className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 text-sm font-medium transition-[border-color,background] duration-150",
-                  engineVersion === e.value
-                    ? "border-accent bg-accent/10 text-white"
-                    : "border-border bg-bg text-text",
-                )}
-                onClick={() => setEngineVersion(e.value)}
-              >
-                <span className="text-[28px] leading-none">{e.icon}</span>
-                <span>{e.label}</span>
-                <span className="text-[11px] text-text-muted">{e.desc}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
         {/* Game Mode */}
         <section className="mb-7 text-left">
           <h2 className="mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase">
@@ -148,6 +123,33 @@ function IndexPage() {
             ))}
           </div>
         </section>
+
+        {/* Engine — hidden in PvP */}
+        {gameMode !== "multiplayer" && (
+          <section className="mb-7 text-left">
+            <h2 className="mb-2.5 text-[11px] font-bold tracking-[0.08em] text-text-muted uppercase">
+              Engine
+            </h2>
+            <div className="flex gap-2.5">
+              {ENGINES.map((e) => (
+                <button
+                  key={e.value}
+                  className={cn(
+                    "flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 px-2.5 py-3.5 text-sm font-medium transition-[border-color,background] duration-150",
+                    engineVersion === e.value
+                      ? "border-accent bg-accent/10 text-white"
+                      : "border-border bg-bg text-text",
+                  )}
+                  onClick={() => setEngineVersion(e.value)}
+                >
+                  <span className="text-[28px] leading-none">{e.icon}</span>
+                  <span>{e.label}</span>
+                  <span className="text-[11px] text-text-muted">{e.desc}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Play as — hidden in CvC */}
         {!isCvC && (
