@@ -81,6 +81,42 @@ function parseUciMove(move: string): {
   };
 }
 
+function initWorkerV1() {
+  if (workerV1) return;
+
+  workerV1 = new Worker(new URL("../lib/engine/v1/minimaxWorker.ts", import.meta.url), {
+    type: "module",
+  });
+
+  workerV1.onmessage = handleMinimaxWorkerMessage;
+
+  workerV1.onerror = (event) => {
+    console.error("Minimax worker error:", event);
+    chessStore.setState({ isComputerThinking: false });
+  };
+}
+
+function initWorkerV2() {
+  if (workerV2) return;
+
+  workerV2 = createStockfishWorker();
+
+  workerV2.onmessage = handleStockfishMessage;
+
+  workerV2.onerror = (event) => {
+    console.error("Stockfish worker error:", event);
+
+    stockfishBusy = false;
+    stockfishReady = false;
+    stockfishActiveId = -1;
+
+    chessStore.setState({ isComputerThinking: false });
+  };
+
+  // Start the Stockfish UCI handshake.
+  workerV2.postMessage("uci");
+}
+
 function stopStockfish() {
   queuedStockfishSearch = null;
 
@@ -107,6 +143,8 @@ function startQueuedStockfishSearch() {
 }
 
 function requestStockfishMove(search: StockfishSearch) {
+  initWorkerV2();
+
   queuedStockfishSearch = search;
 
   if (stockfishBusy) {
@@ -229,6 +267,8 @@ const chessStore = createStore<ChessStore>()(
 
           return;
         }
+
+        initWorkerV1();
 
         const depth = DEPTH_MAP[activeDifficulty];
 
@@ -541,38 +581,6 @@ function createStockfishWorker(): Worker {
   const wasmUrl = new URL("stockfish/stockfish-18-lite-single.wasm", baseUrl);
   workerUrl.hash = encodeURIComponent(wasmUrl.href);
   return new Worker(workerUrl);
-}
-
-// ── Worker bootstrap ──────────────────────────────────────────────────────────
-
-if (typeof window !== "undefined" && typeof Worker !== "undefined") {
-  workerV1 = new Worker(new URL("../lib/engine/v1/minimaxWorker.ts", import.meta.url), {
-    type: "module",
-  });
-
-  workerV1.onmessage = handleMinimaxWorkerMessage;
-
-  workerV1.onerror = (event) => {
-    console.error("Minimax worker error:", event);
-    chessStore.setState({ isComputerThinking: false });
-  };
-
-  workerV2 = createStockfishWorker();
-
-  workerV2.onmessage = handleStockfishMessage;
-
-  workerV2.onerror = (event) => {
-    console.error("Stockfish worker error:", event);
-
-    stockfishBusy = false;
-    stockfishReady = false;
-    stockfishActiveId = -1;
-
-    chessStore.setState({ isComputerThinking: false });
-  };
-
-  // Start the Stockfish UCI handshake.
-  workerV2.postMessage("uci");
 }
 
 // ── React hook ────────────────────────────────────────────────────────────────
