@@ -10,43 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as GameRouteImport } from './routes/game'
+import { Route as V1GameRouteImport } from './routes/v1/game'
+import { Route as V2GameRouteImport } from './routes/v2/game'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GameRoute = GameRouteImport.update({
-  id: '/game',
-  path: '/game',
+const V1GameRoute = V1GameRouteImport.update({
+  id: '/v1/game',
+  path: '/v1/game',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V2GameRoute = V2GameRouteImport.update({
+  id: '/v2/game',
+  path: '/v2/game',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/game': typeof GameRoute
+  '/v1/game': typeof V1GameRoute
+  '/v2/game': typeof V2GameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/game': typeof GameRoute
+  '/v1/game': typeof V1GameRoute
+  '/v2/game': typeof V2GameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/game': typeof GameRoute
+  '/v1/game': typeof V1GameRoute
+  '/v2/game': typeof V2GameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/game'
+  fullPaths: '/' | '/v1/game' | '/v2/game'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/game'
-  id: '__root__' | '/' | '/game'
+  to: '/' | '/v1/game' | '/v2/game'
+  id: '__root__' | '/' | '/v1/game' | '/v2/game'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  GameRoute: typeof GameRoute
+  V1GameRoute: typeof V1GameRoute
+  V2GameRoute: typeof V2GameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +68,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/game': {
-      id: '/game'
-      path: '/game'
-      fullPath: '/game'
-      preLoaderRoute: typeof GameRouteImport
+    '/v1/game': {
+      id: '/v1/game'
+      path: '/v1/game'
+      fullPath: '/v1/game'
+      preLoaderRoute: typeof V1GameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v2/game': {
+      id: '/v2/game'
+      path: '/v2/game'
+      fullPath: '/v2/game'
+      preLoaderRoute: typeof V2GameRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +87,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  GameRoute: GameRoute,
+  V1GameRoute: V1GameRoute,
+  V2GameRoute: V2GameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

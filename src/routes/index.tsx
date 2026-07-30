@@ -88,7 +88,7 @@ function IndexPage() {
 
   function handleStart() {
     resetGame(color, difficulty, gameMode, difficultyBlack, engineVersion);
-    void router.navigate({ to: "/game" });
+    void router.navigate({ to: engineVersion === "v2" ? "/v2/game" : "/v1/game" });
   }
 
   return (

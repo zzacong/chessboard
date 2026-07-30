@@ -1,21 +1,14 @@
-import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 
 import { Board } from "@/components/Board";
 import { Sidebar } from "@/components/Sidebar";
 import { StatusBar } from "@/components/StatusBar";
-import { getChessState } from "@/store/chessStore";
 
-export const Route = createFileRoute("/game")({
-  beforeLoad: () => {
-    const { gameStarted } = getChessState();
-    if (!gameStarted) {
-      throw redirect({ to: "/" });
-    }
-  },
-  component: GamePage,
-});
+interface GameLayoutProps {
+  badge: string;
+}
 
-function GamePage() {
+export function GameLayout({ badge }: GameLayoutProps) {
   const router = useRouter();
 
   function handleNewGame() {
@@ -39,7 +32,7 @@ function GamePage() {
             className="inline-block h-2 w-2 rounded-full bg-accent"
             style={{ boxShadow: "0 0 8px var(--color-accent)" }}
           />
-          Chess
+          Chess <span className="text-[12px] font-normal text-text-muted">{badge}</span>
         </span>
       </header>
 
