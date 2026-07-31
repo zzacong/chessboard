@@ -79,11 +79,11 @@ button {
   font-size: inherit;
 }
 
-/* ── Serif display — used only for wordmark ── */
+/* ── Display — wordmark ── */
 .wordmark {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Georgia", "Palatino Linotype", serif;
   font-style: italic;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 /* ── Scrollbar ── */

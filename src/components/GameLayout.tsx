@@ -16,26 +16,39 @@ export function GameLayout({ badge }: GameLayoutProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-bg">
+    <div className="flex min-h-[100dvh] flex-col bg-bg">
       <header
-        className="sticky top-0 z-10 flex h-[50px] items-center border-b border-border px-6 backdrop-blur-sm"
-        style={{ background: "rgba(26,25,24,0.85)" }}
+        className="sticky top-0 z-10 flex h-[56px] items-center gap-3 border-b border-border px-5"
+        style={{ background: "rgba(17,16,16,0.92)", backdropFilter: "blur(12px)" }}
       >
-        <span className="wordmark text-[18px] text-text" style={{ lineHeight: 1 }}>
+        <span className="wordmark text-[20px] text-text" style={{ lineHeight: 1 }}>
           Chess
         </span>
         <span
-          className="ml-2 rounded-sm px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.1em] text-text-muted uppercase"
+          className="h-3.5 w-px shrink-0"
+          style={{ background: "var(--color-border-2)" }}
+          aria-hidden="true"
+        />
+        <span
+          className="rounded px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-[0.08em] text-text-muted"
           style={{ background: "var(--color-surface-2)" }}
         >
           {badge}
         </span>
+        <div className="flex-1" />
+        <button
+          className="rounded border border-border bg-transparent px-3 py-1.5 text-[12px] font-medium text-text-muted transition-all duration-100 hover:border-border-2 hover:text-text active:scale-[0.98]"
+          onClick={handleNewGame}
+          aria-label="Start a new game"
+        >
+          New Game
+        </button>
       </header>
 
       <main className="flex flex-1 items-start justify-center px-5 pt-6 pb-10">
         <div className="flex items-start gap-5 max-sm:w-full max-sm:flex-col max-sm:items-center">
           <div className="flex flex-col items-start gap-3 max-sm:w-full max-sm:items-center">
-            <StatusBar onNewGame={handleNewGame} />
+            <StatusBar />
             <Board />
           </div>
 

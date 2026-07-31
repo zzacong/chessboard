@@ -3,10 +3,6 @@ import type { Difficulty, GameMode, GameStatus, PieceColor } from "@/types";
 import { cn } from "@/lib/cn";
 import { useChessStore } from "@/store/chessStore";
 
-interface StatusBarProps {
-  onNewGame: () => void;
-}
-
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   easy: "Easy",
   medium: "Medium",
@@ -27,27 +23,27 @@ function statusMessage(
     const turnName = turn === "w" ? "White" : "Black";
     if (status === "checkmate") {
       const winner = turn === "w" ? "Black" : "White";
-      return { text: `Checkmate — ${winner} wins! 🎉`, type: "success" };
+      return { text: `Checkmate - ${winner} wins!`, type: "success" };
     }
-    if (status === "stalemate") return { text: "Stalemate — Draw", type: "warning" };
+    if (status === "stalemate") return { text: "Stalemate - Draw", type: "warning" };
     if (status === "draw") return { text: "Draw", type: "warning" };
     if (status === "check") {
-      return { text: `Check — ${turnName}'s king in danger!`, type: "danger" };
+      return { text: `Check - ${turnName}'s king is in danger`, type: "danger" };
     }
     if (isPaused) return { text: "Paused", type: "warning" };
-    return { text: `${turnName} is thinking…`, type: "normal" };
+    return { text: `${turnName} is thinking...`, type: "normal" };
   }
 
   if (gameMode === "multiplayer") {
     const turnName = turn === "w" ? "White" : "Black";
     if (status === "checkmate") {
       const winner = turn === "w" ? "Black" : "White";
-      return { text: `${winner} wins! 🎉`, type: "success" };
+      return { text: `${winner} wins!`, type: "success" };
     }
-    if (status === "stalemate") return { text: "Stalemate — Draw", type: "warning" };
+    if (status === "stalemate") return { text: "Stalemate - Draw", type: "warning" };
     if (status === "draw") return { text: "Draw", type: "warning" };
     if (status === "check") {
-      return { text: `Check — ${turnName}'s king in danger!`, type: "danger" };
+      return { text: `Check - ${turnName}'s king is in danger`, type: "danger" };
     }
     return { text: `${turnName}'s turn`, type: "normal" };
   }
@@ -56,17 +52,17 @@ function statusMessage(
   if (status === "checkmate") {
     const winner = turn === "w" ? "b" : "w";
     return winner === playerColor
-      ? { text: "Checkmate — You win! 🎉", type: "success" }
-      : { text: "Checkmate — Computer wins", type: "danger" };
+      ? { text: "Checkmate - You win!", type: "success" }
+      : { text: "Checkmate - Computer wins", type: "danger" };
   }
-  if (status === "stalemate") return { text: "Stalemate — Draw", type: "warning" };
+  if (status === "stalemate") return { text: "Stalemate - Draw", type: "warning" };
   if (status === "draw") return { text: "Draw", type: "warning" };
   if (status === "check") {
     return turn === playerColor
-      ? { text: "Check — Your king is in danger!", type: "danger" }
+      ? { text: "Check - Your king is in danger", type: "danger" }
       : { text: "Check!", type: "warning" };
   }
-  if (isComputerThinking) return { text: "Computer is thinking…", type: "normal" };
+  if (isComputerThinking) return { text: "Computer is thinking...", type: "normal" };
   return turn === playerColor
     ? { text: "Your turn", type: "normal" }
     : { text: "Computer's turn", type: "normal" };
@@ -86,7 +82,7 @@ const messageColor: Record<MsgType, string> = {
   success: "var(--color-success)",
 };
 
-export function StatusBar({ onNewGame }: StatusBarProps) {
+export function StatusBar() {
   const status = useChessStore((s) => s.status);
   const turn = useChessStore((s) => s.turn);
   const playerColor = useChessStore((s) => s.playerColor);
@@ -107,19 +103,19 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
 
   let modeChip: string;
   if (gameMode === "multiplayer") {
-    modeChip = "👥 Local 2P";
+    modeChip = "Local 2P";
   } else if (gameMode === "computer-vs-computer") {
-    modeChip = `🤖 CPU vs CPU · ${DIFFICULTY_LABELS[difficulty]} vs ${DIFFICULTY_LABELS[difficultyBlack]}`;
+    modeChip = `CPU vs CPU · ${DIFFICULTY_LABELS[difficulty]} / ${DIFFICULTY_LABELS[difficultyBlack]}`;
   } else {
-    modeChip = `${playerColor === "w" ? "♔ White" : "♚ Black"} · ${DIFFICULTY_LABELS[difficulty]}`;
+    modeChip = `${playerColor === "w" ? "White" : "Black"} · ${DIFFICULTY_LABELS[difficulty]}`;
   }
 
   const btnBase =
-    "rounded border border-border bg-transparent px-3.5 py-1.5 text-[12px] font-semibold whitespace-nowrap text-text-muted transition-[border-color,color] duration-100 hover:border-border-2 hover:text-text";
+    "rounded border border-border bg-transparent px-3 py-1.5 text-[11px] font-medium whitespace-nowrap text-text-muted transition-all duration-100 hover:border-border-2 hover:text-text active:scale-[0.97]";
 
   return (
-    <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3.5 py-2">
-      <div className="flex min-w-0 items-center gap-2">
+    <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3.5 py-2.5">
+      <div className="flex min-w-0 items-center gap-2.5">
         <span
           className={cn("h-1.5 w-1.5 shrink-0 rounded-full", blink && "animate-blink")}
           style={{ background: indicatorColor[msg.type] }}
@@ -132,7 +128,17 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <span className="text-[11px] whitespace-nowrap text-text-muted">{modeChip}</span>
+        <span
+          className="hidden text-[10px] whitespace-nowrap text-text-muted sm:block"
+          style={{ opacity: 0.6 }}
+        >
+          {modeChip}
+        </span>
+        <span
+          className="hidden h-3 w-px sm:block"
+          style={{ background: "var(--color-border)" }}
+          aria-hidden="true"
+        />
         {canUndo && (
           <button className={btnBase} onClick={undoMove}>
             Undo
@@ -143,15 +149,6 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
             {isPaused ? "Resume" : "Pause"}
           </button>
         )}
-        <button
-          className={cn(
-            btnBase,
-            isOver && "animate-pulse-border border-accent text-accent hover:text-accent",
-          )}
-          onClick={onNewGame}
-        >
-          New Game
-        </button>
       </div>
     </div>
   );
