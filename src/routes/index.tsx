@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { Difficulty, EngineVersion, GameMode, PieceColor } from "@/types";
 
@@ -11,19 +11,19 @@ export const Route = createFileRoute("/")({
 });
 
 const ENGINES: { value: EngineVersion; label: string; sub: string }[] = [
-  { value: "v1", label: "Minimax", sub: "Classic search" },
-  { value: "v2", label: "Stockfish", sub: "UCI engine" },
+  { value: "v1", label: "Minimax", sub: "Classic search for quick local play." },
+  { value: "v2", label: "Stockfish", sub: "Stronger UCI analysis with deeper calculation." },
 ];
 
 const MODES: { value: GameMode; label: string; sub: string }[] = [
-  { value: "vs-computer", label: "vs Computer", sub: "You vs CPU" },
-  { value: "multiplayer", label: "Two Players", sub: "Local hotseat" },
-  { value: "computer-vs-computer", label: "CPU vs CPU", sub: "Watch engines" },
+  { value: "vs-computer", label: "Play the engine", sub: "Human against computer." },
+  { value: "multiplayer", label: "Pass and play", sub: "Two players on one board." },
+  { value: "computer-vs-computer", label: "Watch a match", sub: "Let both sides calculate." },
 ];
 
-const COLORS: { value: PieceColor; label: string; symbol: string }[] = [
-  { value: "w", label: "White", symbol: "♔" },
-  { value: "b", label: "Black", symbol: "♚" },
+const COLORS: { value: PieceColor; label: string; symbol: string; sub: string }[] = [
+  { value: "w", label: "White", symbol: "♔", sub: "Move first and press early." },
+  { value: "b", label: "Black", symbol: "♚", sub: "Absorb pressure and counter." },
 ];
 
 const DIFFICULTIES: { value: Difficulty; label: string }[] = [
@@ -37,34 +37,60 @@ const DEPTH_DESCS: Record<Difficulty, string> = {
   medium: "Depth 3",
   hard: "Depth 5",
 };
+
 const SKILL_DESCS: Record<Difficulty, string> = {
-  easy: "~1320 Elo",
-  medium: "~1800 Elo",
-  hard: "~2800 Elo",
+  easy: "Approx. 1320 Elo",
+  medium: "Approx. 1800 Elo",
+  hard: "Approx. 2800 Elo",
 };
 
-const sectionLabelClass =
-  "mb-3 block text-[10px] font-semibold tracking-[0.12em] text-text-muted uppercase";
+const modeSummaries: Record<GameMode, string> = {
+  "vs-computer": "Pick a side, set the strength, and start playing immediately.",
+  multiplayer: "Share the same board locally with no engine running.",
+  "computer-vs-computer": "Compare settings and watch both sides play autonomously.",
+};
+
+const sectionLabelClass = "text-[11px] font-medium tracking-[0.08em] text-text-muted uppercase";
 
 function OptionButton({
   selected,
   onClick,
+  title,
+  subtitle,
   children,
 }: {
   selected: boolean;
   onClick: () => void;
-  children: React.ReactNode;
+  title: string;
+  subtitle: string;
+  children?: React.ReactNode;
 }) {
   return (
     <button
       className={cn(
-        "flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-3 text-center transition-[border-color,background-color] duration-100",
+        "group flex min-h-[128px] flex-col justify-between rounded-2xl border p-4 text-left transition-all duration-200 active:scale-[0.99]",
         selected
-          ? "border-accent bg-accent/8 text-text"
-          : "border-border bg-surface-2 text-text-muted hover:border-border-2 hover:text-text",
+          ? "border-accent bg-accent/10 text-text"
+          : "border-border bg-surface/70 text-text hover:border-border-2 hover:bg-surface",
       )}
       onClick={onClick}
+      type="button"
     >
+      <div className="space-y-2">
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-[15px] font-semibold tracking-[-0.02em] text-text">{title}</span>
+          <span
+            className={cn(
+              "mt-0.5 h-2.5 w-2.5 rounded-full border transition-colors",
+              selected
+                ? "border-accent bg-accent"
+                : "border-border-2 bg-transparent group-hover:border-text-muted",
+            )}
+            aria-hidden="true"
+          />
+        </div>
+        <p className="max-w-[26ch] text-sm leading-6 text-text-muted">{subtitle}</p>
+      </div>
       {children}
     </button>
   );
@@ -80,18 +106,38 @@ function DifficultyPicker({
   engineVersion: EngineVersion;
 }) {
   const descs = engineVersion === "v2" ? SKILL_DESCS : DEPTH_DESCS;
+
   return (
-    <div className="flex gap-2">
-      {DIFFICULTIES.map((d) => (
-        <OptionButton
-          key={d.value}
-          selected={selected === d.value}
-          onClick={() => onChange(d.value)}
+    <div className="grid gap-3 sm:grid-cols-3">
+      {DIFFICULTIES.map((difficulty) => (
+        <button
+          key={difficulty.value}
+          className={cn(
+            "rounded-2xl border px-4 py-4 text-left transition-all duration-200 active:scale-[0.99]",
+            selected === difficulty.value
+              ? "border-accent bg-accent/10 text-text"
+              : "border-border bg-surface/60 text-text hover:border-border-2 hover:bg-surface",
+          )}
+          onClick={() => onChange(difficulty.value)}
+          type="button"
         >
-          <span className="text-sm font-semibold">{d.label}</span>
-          <span className="text-[11px]">{descs[d.value]}</span>
-        </OptionButton>
+          <span className="block text-[15px] font-semibold tracking-[-0.02em]">
+            {difficulty.label}
+          </span>
+          <span className="mt-1 block text-sm leading-6 text-text-muted">
+            {descs[difficulty.value]}
+          </span>
+        </button>
       ))}
+    </div>
+  );
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border-t border-border py-3 first:border-t-0 first:pt-0 last:pb-0">
+      <div className="text-xs tracking-[0.08em] text-text-muted uppercase">{label}</div>
+      <div className="mt-1 text-sm leading-6 text-text">{value}</div>
     </div>
   );
 }
@@ -107,6 +153,16 @@ function IndexPage() {
   const [difficultyBlack, setDifficultyBlack] = useState<Difficulty>("medium");
 
   const isCvC = gameMode === "computer-vs-computer";
+  const isMultiplayer = gameMode === "multiplayer";
+
+  const currentEngine = useMemo(
+    () => ENGINES.find((engine) => engine.value === engineVersion) ?? ENGINES[0],
+    [engineVersion],
+  );
+
+  const whiteSummary = engineVersion === "v2" ? SKILL_DESCS[difficulty] : DEPTH_DESCS[difficulty];
+  const blackSummary =
+    engineVersion === "v2" ? SKILL_DESCS[difficultyBlack] : DEPTH_DESCS[difficultyBlack];
 
   function handleStart() {
     resetGame(color, difficulty, gameMode, difficultyBlack, engineVersion);
@@ -114,141 +170,292 @@ function IndexPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-bg px-4 py-10">
-      <div className="w-full max-w-[400px]">
-        {/* Wordmark */}
-        <div className="mb-8 text-center">
-          <div
-            className="mb-1 inline-block text-[72px] leading-none select-none"
-            style={{ color: "var(--sq-light)", opacity: 0.85 }}
-            aria-hidden="true"
-          >
-            ♛
-          </div>
-          <h1
-            className="wordmark text-[38px] font-normal tracking-tight text-text"
-            style={{ lineHeight: 1 }}
-          >
-            Chess
-          </h1>
-          <p className="mt-1.5 text-[13px] text-text-muted">Choose your match settings</p>
-        </div>
-
-        {/* Card */}
-        <div
-          className="rounded-xl border border-border bg-surface px-7 py-7"
-          style={{ boxShadow: "0 16px 48px rgba(0,0,0,0.6)" }}
-        >
-          {/* Game Mode */}
-          <section className="mb-6">
-            <span className={sectionLabelClass}>Mode</span>
-            <div className="flex gap-2">
-              {MODES.map((m) => (
-                <OptionButton
-                  key={m.value}
-                  selected={gameMode === m.value}
-                  onClick={() => setGameMode(m.value)}
-                >
-                  <span className="text-[13px] leading-tight font-semibold">{m.label}</span>
-                  <span className="text-[11px] leading-tight">{m.sub}</span>
-                </OptionButton>
-              ))}
+    <div className="min-h-[100dvh] bg-bg text-text">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-[1400px] flex-col px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+        <header className="flex min-h-[68px] items-center justify-between border-b border-border/80 pb-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border bg-surface text-[26px]"
+              style={{ color: "var(--sq-light)" }}
+              aria-hidden="true"
+            >
+              ♛
             </div>
+            <div>
+              <div className="wordmark pb-1 text-[28px] leading-[1.1] text-text">Chess</div>
+              <p className="text-sm text-text-muted">Quick local play with two engine paths.</p>
+            </div>
+          </div>
+          <div className="hidden items-center gap-3 lg:flex">
+            <span className="rounded-full border border-border px-3 py-1.5 text-xs text-text-muted">
+              React 19
+            </span>
+            <span className="rounded-full border border-border px-3 py-1.5 text-xs text-text-muted">
+              Minimax + Stockfish
+            </span>
+          </div>
+        </header>
+
+        <main className="grid flex-1 gap-8 py-8 lg:grid-cols-[minmax(0,1.15fr)_420px] lg:gap-10 lg:py-10">
+          <section className="grid gap-6 lg:grid-rows-[auto_auto_1fr]">
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
+              <div className="rounded-[28px] border border-border bg-surface px-6 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
+                <p className={sectionLabelClass}>Local chess, rebuilt</p>
+                <h1 className="mt-4 max-w-[10ch] text-4xl leading-[1.02] font-semibold tracking-[-0.06em] text-text sm:text-5xl lg:text-6xl">
+                  Set the board your way and start fast.
+                </h1>
+                <p className="mt-5 max-w-[32ch] text-base leading-7 text-text-muted sm:text-lg">
+                  Choose the engine, the side, and the pace. Then jump straight into a clean local
+                  match.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <button
+                    className="rounded-full bg-accent px-5 py-3 text-sm font-semibold text-bg transition-opacity duration-200 hover:opacity-90 active:scale-[0.98]"
+                    onClick={handleStart}
+                    type="button"
+                  >
+                    Start game
+                  </button>
+                  <a
+                    className="rounded-full border border-border px-5 py-3 text-sm font-semibold text-text transition-colors duration-200 hover:border-border-2 hover:bg-surface-2"
+                    href="#setup"
+                  >
+                    Adjust setup
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-1">
+                <div className="overflow-hidden rounded-[28px] border border-border bg-surface-2">
+                  <img
+                    alt="Chess pieces arranged on a board before the opening move."
+                    className="h-52 w-full object-cover"
+                    src="https://picsum.photos/seed/chessboard-opening/960/720"
+                  />
+                  <div className="space-y-2 px-5 py-5">
+                    <div className="text-sm font-semibold tracking-[-0.02em] text-text">
+                      Two engine styles
+                    </div>
+                    <p className="max-w-[28ch] text-sm leading-6 text-text-muted">
+                      Switch between classic local search and a stronger UCI-backed opponent.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-[28px] border border-border bg-surface px-5 py-5">
+                  <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
+                    <DetailItem label="Current mode" value={modeSummaries[gameMode]} />
+                    <DetailItem label="Engine path" value={currentEngine.sub} />
+                    <DetailItem
+                      label="White side"
+                      value={
+                        isCvC
+                          ? whiteSummary
+                          : color === "w"
+                            ? "You open the game."
+                            : "Engine opens the game."
+                      }
+                    />
+                    <DetailItem
+                      label="Black side"
+                      value={
+                        isCvC
+                          ? blackSummary
+                          : color === "b"
+                            ? "You defend and counter."
+                            : "Engine responds as Black."
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section className="rounded-[28px] border border-border bg-surface px-6 py-6 sm:px-8 sm:py-8">
+              <div className="grid gap-5 md:grid-cols-3">
+                <div className="border-b border-border pb-4 md:border-r md:border-b-0 md:pr-5 md:pb-0">
+                  <div className="text-sm font-semibold tracking-[-0.02em] text-text">
+                    Fast setup
+                  </div>
+                  <p className="mt-2 max-w-[28ch] text-sm leading-6 text-text-muted">
+                    Every configuration lives on one screen so you can start without digging through
+                    menus.
+                  </p>
+                </div>
+                <div className="border-b border-border pb-4 md:border-r md:border-b-0 md:pr-5 md:pb-0">
+                  <div className="text-sm font-semibold tracking-[-0.02em] text-text">
+                    Flexible matches
+                  </div>
+                  <p className="mt-2 max-w-[28ch] text-sm leading-6 text-text-muted">
+                    Play solo, hand the board to a friend, or let both engines run a full game.
+                  </p>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold tracking-[-0.02em] text-text">
+                    Clear strength tiers
+                  </div>
+                  <p className="mt-2 max-w-[28ch] text-sm leading-6 text-text-muted">
+                    Difficulty labels stay readable whether you care about depth or approximate Elo.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section
+              className="grid gap-6 rounded-[28px] border border-border bg-surface px-6 py-6 sm:px-8 sm:py-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"
+              id="setup"
+            >
+              <div>
+                <h2 className="text-2xl leading-tight font-semibold tracking-[-0.04em] text-text sm:text-3xl">
+                  Match setup
+                </h2>
+                <p className="mt-3 max-w-[34ch] text-sm leading-6 text-text-muted sm:text-base">
+                  Keep the content, lose the cramped card. This version spreads the choices into
+                  clear sections and keeps the start action obvious.
+                </p>
+              </div>
+
+              <div className="grid gap-8">
+                <section className="grid gap-4">
+                  <div className={sectionLabelClass}>Mode</div>
+                  <div className="grid gap-3 lg:grid-cols-3">
+                    {MODES.map((mode) => (
+                      <OptionButton
+                        key={mode.value}
+                        selected={gameMode === mode.value}
+                        onClick={() => setGameMode(mode.value)}
+                        subtitle={mode.sub}
+                        title={mode.label}
+                      />
+                    ))}
+                  </div>
+                </section>
+
+                {!isMultiplayer && (
+                  <section className="grid gap-4">
+                    <div className={sectionLabelClass}>Engine</div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {ENGINES.map((engine) => (
+                        <OptionButton
+                          key={engine.value}
+                          selected={engineVersion === engine.value}
+                          onClick={() => setEngineVersion(engine.value)}
+                          subtitle={engine.sub}
+                          title={engine.label}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {!isCvC && (
+                  <section className="grid gap-4">
+                    <div className={sectionLabelClass}>Side</div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {COLORS.map((pieceColor) => (
+                        <OptionButton
+                          key={pieceColor.value}
+                          selected={color === pieceColor.value}
+                          onClick={() => setColor(pieceColor.value)}
+                          subtitle={pieceColor.sub}
+                          title={pieceColor.label}
+                        >
+                          <span
+                            className="text-[32px] leading-none"
+                            style={{
+                              color:
+                                pieceColor.value === "w" ? "var(--sq-light)" : "var(--sq-dark)",
+                            }}
+                          >
+                            {pieceColor.symbol}
+                          </span>
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {gameMode === "vs-computer" && (
+                  <section className="grid gap-4">
+                    <div className={sectionLabelClass}>Difficulty</div>
+                    <DifficultyPicker
+                      engineVersion={engineVersion}
+                      onChange={setDifficulty}
+                      selected={difficulty}
+                    />
+                  </section>
+                )}
+
+                {isCvC && (
+                  <section className="grid gap-6">
+                    <div className="grid gap-4">
+                      <div className={sectionLabelClass}>White difficulty</div>
+                      <DifficultyPicker
+                        engineVersion={engineVersion}
+                        onChange={setDifficulty}
+                        selected={difficulty}
+                      />
+                    </div>
+                    <div className="grid gap-4">
+                      <div className={sectionLabelClass}>Black difficulty</div>
+                      <DifficultyPicker
+                        engineVersion={engineVersion}
+                        onChange={setDifficultyBlack}
+                        selected={difficultyBlack}
+                      />
+                    </div>
+                  </section>
+                )}
+              </div>
+            </section>
           </section>
 
-          {/* Engine — hidden in PvP */}
-          {gameMode !== "multiplayer" && (
-            <section className="mb-6">
-              <span className={sectionLabelClass}>Engine</span>
-              <div className="flex gap-2">
-                {ENGINES.map((e) => (
-                  <OptionButton
-                    key={e.value}
-                    selected={engineVersion === e.value}
-                    onClick={() => setEngineVersion(e.value)}
-                  >
-                    <span className="text-[13px] font-semibold">{e.label}</span>
-                    <span className="text-[11px]">{e.sub}</span>
-                  </OptionButton>
-                ))}
-              </div>
-            </section>
-          )}
+          <aside className="rounded-[28px] border border-border bg-surface px-6 py-6 sm:px-8 sm:py-8 lg:sticky lg:top-6 lg:h-fit">
+            <div>
+              <p className={sectionLabelClass}>Ready to play</p>
+              <h2 className="mt-3 text-2xl leading-tight font-semibold tracking-[-0.04em] text-text">
+                Current match summary
+              </h2>
+              <p className="mt-3 max-w-[30ch] text-sm leading-6 text-text-muted">
+                Review the setup before you launch. The selected route stays the same as the current
+                app flow.
+              </p>
+            </div>
 
-          {/* Play as — hidden in CvC */}
-          {!isCvC && (
-            <section className="mb-6">
-              <span className={sectionLabelClass}>Play as</span>
-              <div className="flex gap-2">
-                {COLORS.map((c) => (
-                  <OptionButton
-                    key={c.value}
-                    selected={color === c.value}
-                    onClick={() => setColor(c.value)}
-                  >
-                    <span
-                      className="text-[28px] leading-none"
-                      style={{
-                        color: c.value === "w" ? "var(--sq-light)" : "var(--sq-dark)",
-                        opacity: 0.9,
-                      }}
-                    >
-                      {c.symbol}
-                    </span>
-                    <span className="text-[13px] font-semibold">{c.label}</span>
-                  </OptionButton>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Difficulty — single picker for vs-computer */}
-          {gameMode === "vs-computer" && (
-            <section className="mb-6">
-              <span className={sectionLabelClass}>Difficulty</span>
-              <DifficultyPicker
-                selected={difficulty}
-                onChange={setDifficulty}
-                engineVersion={engineVersion}
+            <div className="mt-8 space-y-5">
+              <DetailItem
+                label="Mode"
+                value={MODES.find((mode) => mode.value === gameMode)?.label ?? ""}
               />
-            </section>
-          )}
-
-          {/* Difficulty — dual pickers for CvC */}
-          {isCvC && (
-            <section className="mb-6">
-              <div className="mb-4">
-                <span className={sectionLabelClass}>
-                  White difficulty{" "}
-                  <span style={{ color: "var(--sq-light)", opacity: 0.85 }}>♔</span>
-                </span>
-                <DifficultyPicker
-                  selected={difficulty}
-                  onChange={setDifficulty}
-                  engineVersion={engineVersion}
+              <DetailItem
+                label="Engine"
+                value={isMultiplayer ? "No engine needed for pass and play." : currentEngine.label}
+              />
+              {!isCvC && (
+                <DetailItem
+                  label="Side"
+                  value={COLORS.find((pieceColor) => pieceColor.value === color)?.label ?? ""}
                 />
-              </div>
-              <div>
-                <span className={sectionLabelClass}>
-                  Black difficulty <span style={{ color: "var(--sq-dark)" }}>♚</span>
-                </span>
-                <DifficultyPicker
-                  selected={difficultyBlack}
-                  onChange={setDifficultyBlack}
-                  engineVersion={engineVersion}
+              )}
+              {gameMode === "vs-computer" && (
+                <DetailItem
+                  label="Difficulty"
+                  value={engineVersion === "v2" ? SKILL_DESCS[difficulty] : DEPTH_DESCS[difficulty]}
                 />
-              </div>
-            </section>
-          )}
+              )}
+              {isCvC && <DetailItem label="White engine" value={whiteSummary} />}
+              {isCvC && <DetailItem label="Black engine" value={blackSummary} />}
+            </div>
 
-          <button
-            className="w-full rounded-lg py-3 text-[15px] font-semibold tracking-wide text-bg transition-opacity duration-100 hover:opacity-90 active:scale-[0.99]"
-            style={{ background: "var(--color-accent)" }}
-            onClick={handleStart}
-          >
-            Play
-          </button>
-        </div>
+            <button
+              className="mt-8 w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold text-bg transition-opacity duration-200 hover:opacity-90 active:scale-[0.98]"
+              onClick={handleStart}
+              type="button"
+            >
+              Start game
+            </button>
+          </aside>
+        </main>
       </div>
     </div>
   );
