@@ -1,11 +1,14 @@
+import type { Engine, EngineOptions } from "../index";
+
 interface WorkerResponse {
   bestMove: string;
   id: number;
 }
 
-export class MinimaxEngine {
+export class MinimaxEngine implements Engine {
   private worker: Worker;
   private pending = new Map<number, (move: string | null) => void>();
+  private nextId = 0;
 
   constructor() {
     this.worker = new Worker(new URL("./minimaxWorker.ts", import.meta.url), {
@@ -27,11 +30,21 @@ export class MinimaxEngine {
     };
   }
 
-  getBestMove(fen: string, depth: number, id: number): Promise<string | null> {
+  getBestMove(fen: string, opts: EngineOptions): Promise<string | null> {
+    const id = ++this.nextId;
     return new Promise((resolve) => {
       this.pending.set(id, resolve);
-      this.worker.postMessage({ fen, depth, id });
+      this.worker.postMessage({ fen, depth: opts.depth, id });
     });
+  }
+
+  cancelSearch(): void {
+    // Minimax runs synchronously in the worker; it cannot be interrupted.
+    // Stale results are discarded by the store's pendingMsgId guard.
+  }
+
+  newGame(): void {
+    // Minimax is stateless — no reset needed.
   }
 
   terminate() {

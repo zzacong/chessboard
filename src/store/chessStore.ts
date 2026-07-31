@@ -4,6 +4,7 @@ import { Chess } from "chess.js";
 import { createStore, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
 
+import type { EngineOptions } from "@/lib/engine";
 import type {
   CapturedPieces,
   Difficulty,
@@ -15,8 +16,7 @@ import type {
   PieceType,
 } from "@/types";
 
-import { getMinimax } from "@/lib/engine/v1/minimaxEngine";
-import { getStockfish } from "@/lib/engine/v2/stockfish";
+import { getEngine } from "@/lib/engine";
 import { DEPTH_MAP, SKILL_MAP } from "@/types";
 
 // ── Module-level non-reactive state ──────────────────────────────────────────
@@ -87,12 +87,7 @@ interface ChessState {
 
 interface ChessActions {
   syncState: () => void;
-  triggerComputerMove: (
-    currentPlayerColor: PieceColor,
-    currentDifficulty: Difficulty,
-    currentDifficultyBlack: Difficulty,
-    currentMode: GameMode,
-  ) => void;
+  triggerComputerMove: () => void;
   selectSquare: (sq: Square) => void;
   resetGame: (
     color: PieceColor,
@@ -142,17 +137,20 @@ const chessStore = createStore<ChessStore>()(
       },
 
       // ── triggerComputerMove ─────────────────────────────────────────────────
-      triggerComputerMove: (
-        currentPlayerColor,
-        currentDifficulty,
-        currentDifficultyBlack,
-        currentMode,
-      ) => {
-        const { engineVersion, isPaused, isComputerThinking } = get();
+      triggerComputerMove: () => {
+        const {
+          engineVersion,
+          isPaused,
+          isComputerThinking,
+          playerColor,
+          difficulty,
+          difficultyBlack,
+          gameMode,
+        } = get();
 
         if (game.isGameOver() || isPaused || isComputerThinking) return;
 
-        if (currentMode === "vs-computer" && game.turn() === currentPlayerColor) {
+        if (gameMode === "vs-computer" && game.turn() === playerColor) {
           return;
         }
 
@@ -161,29 +159,14 @@ const chessStore = createStore<ChessStore>()(
         const id = ++msgId;
         pendingMsgId = id;
 
-        const activeDifficulty = game.turn() === "b" ? currentDifficultyBlack : currentDifficulty;
+        const activeDifficulty = game.turn() === "b" ? difficultyBlack : difficulty;
+        const opts: EngineOptions = {
+          depth: DEPTH_MAP[activeDifficulty],
+          skillLevel: SKILL_MAP[activeDifficulty],
+        };
 
-        if (engineVersion === "v2") {
-          getStockfish()
-            .getBestMove(game.fen(), { skillLevel: SKILL_MAP[activeDifficulty] })
-            .then((bestMove) => {
-              if (id !== pendingMsgId) return;
-              if (bestMove) {
-                applyComputerMove(bestMove, id);
-              } else {
-                chessStore.setState({ isComputerThinking: false });
-              }
-            })
-            .catch((err: unknown) => {
-              if (id !== pendingMsgId) return;
-              console.error("Stockfish error:", err);
-              chessStore.setState({ isComputerThinking: false });
-            });
-          return;
-        }
-
-        getMinimax()
-          .getBestMove(game.fen(), DEPTH_MAP[activeDifficulty], id)
+        getEngine(engineVersion)
+          .getBestMove(game.fen(), opts)
           .then((bestMove) => {
             if (id !== pendingMsgId) return;
             if (bestMove) {
@@ -194,7 +177,7 @@ const chessStore = createStore<ChessStore>()(
           })
           .catch((err: unknown) => {
             if (id !== pendingMsgId) return;
-            console.error("Minimax error:", err);
+            console.error("Engine error:", err);
             chessStore.setState({ isComputerThinking: false });
           });
       },
@@ -204,8 +187,6 @@ const chessStore = createStore<ChessStore>()(
           selectedSquare,
           legalMoveSquares,
           playerColor,
-          difficulty,
-          difficultyBlack,
           gameMode,
           isComputerThinking,
           isPaused,
@@ -243,7 +224,7 @@ const chessStore = createStore<ChessStore>()(
 
             if (gameMode === "vs-computer") {
               setTimeout(() => {
-                triggerComputerMove(playerColor, difficulty, difficultyBlack, gameMode);
+                triggerComputerMove();
               }, 150);
             }
 
@@ -275,10 +256,10 @@ const chessStore = createStore<ChessStore>()(
 
       resetGame: (color, diff, mode, diffBlack = "medium", engVersion = "v1") => {
         pendingMsgId = ++msgId;
-        getStockfish().cancelSearch();
+        getEngine(engVersion).cancelSearch();
 
         game = new Chess();
-        getStockfish().newGame();
+        getEngine(engVersion).newGame?.();
 
         set({
           playerColor: color,
@@ -301,7 +282,7 @@ const chessStore = createStore<ChessStore>()(
 
         if (mode === "computer-vs-computer") {
           setTimeout(() => {
-            get().triggerComputerMove(color, diff, diffBlack, mode);
+            get().triggerComputerMove();
           }, 300);
 
           return;
@@ -309,7 +290,7 @@ const chessStore = createStore<ChessStore>()(
 
         if (mode === "vs-computer" && color === "b") {
           setTimeout(() => {
-            get().triggerComputerMove(color, diff, diffBlack, mode);
+            get().triggerComputerMove();
           }, 300);
         }
       },
@@ -320,7 +301,7 @@ const chessStore = createStore<ChessStore>()(
         if (isComputerThinking) return;
 
         pendingMsgId = ++msgId;
-        getStockfish().cancelSearch();
+        getEngine(get().engineVersion).cancelSearch();
 
         const plies = gameMode === "vs-computer" ? 2 : 1;
 
@@ -346,31 +327,27 @@ const chessStore = createStore<ChessStore>()(
         get().syncState();
 
         if (gameMode === "vs-computer" && game.turn() !== playerColor && !game.isGameOver()) {
-          const { difficulty, difficultyBlack } = get();
-
           setTimeout(() => {
-            get().triggerComputerMove(playerColor, difficulty, difficultyBlack, gameMode);
+            get().triggerComputerMove();
           }, 150);
         }
       },
 
       togglePause: () => {
-        const { isPaused, triggerComputerMove } = get();
+        const { isPaused } = get();
         const nowPaused = !isPaused;
 
         set({ isPaused: nowPaused });
 
         if (nowPaused) {
           pendingMsgId = ++msgId;
-          getStockfish().cancelSearch();
+          getEngine(get().engineVersion).cancelSearch();
           set({ isComputerThinking: false });
           return;
         }
 
         if (!game.isGameOver()) {
-          const { difficulty, difficultyBlack, gameMode, playerColor } = get();
-
-          triggerComputerMove(playerColor, difficulty, difficultyBlack, gameMode);
+          get().triggerComputerMove();
         }
       },
     }),
@@ -381,7 +358,7 @@ const chessStore = createStore<ChessStore>()(
 // ── Computer move application ─────────────────────────────────────────────────
 
 function scheduleNextComputerMove() {
-  const { gameMode, isPaused, difficulty, difficultyBlack, playerColor } = chessStore.getState();
+  const { gameMode, isPaused } = chessStore.getState();
 
   if (gameMode !== "computer-vs-computer" || isPaused || game.isGameOver()) {
     return;
@@ -392,7 +369,7 @@ function scheduleNextComputerMove() {
 
     if (state.isPaused || game.isGameOver()) return;
 
-    state.triggerComputerMove(playerColor, difficulty, difficultyBlack, gameMode);
+    state.triggerComputerMove();
   }, 150);
 }
 

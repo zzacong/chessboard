@@ -1,11 +1,8 @@
+import type { Engine, EngineOptions } from "../index";
+
 type Listener = (line: string) => void;
 
-export interface SearchOptions {
-  skillLevel: number; // 0–20
-  depth?: number; // default 12
-}
-
-export class StockfishEngine {
+export class StockfishEngine implements Engine {
   private worker: Worker;
   private listeners = new Set<Listener>();
   private booted: Promise<void>;
@@ -23,6 +20,12 @@ export class StockfishEngine {
       const line = typeof e.data === "string" ? e.data : (e.data?.data as string);
       if (typeof line !== "string") return;
       for (const l of this.listeners) l(line);
+    };
+    this.worker.onerror = () => {
+      this.listeners.clear();
+      const cancel = this.cancelCurrentSearch;
+      this.cancelCurrentSearch = null;
+      cancel?.();
     };
     this.booted = this.expect("uciok", () => this.send("uci"));
   }
@@ -48,7 +51,7 @@ export class StockfishEngine {
     return this.expect("readyok", () => this.send("isready"));
   }
 
-  async getBestMove(fen: string, opts: SearchOptions): Promise<string | null> {
+  async getBestMove(fen: string, opts: EngineOptions): Promise<string | null> {
     await this.booted;
 
     if (opts.skillLevel !== this.currentSkill) {

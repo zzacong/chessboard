@@ -5,7 +5,7 @@ export type PieceColor = "w" | "b";
 export type PieceType = "p" | "n" | "b" | "r" | "q" | "k";
 export type Difficulty = "easy" | "medium" | "hard";
 export type GameMode = "vs-computer" | "multiplayer" | "computer-vs-computer";
-export type GameStatus = "idle" | "playing" | "check" | "checkmate" | "stalemate" | "draw";
+export type GameStatus = "playing" | "check" | "checkmate" | "stalemate" | "draw";
 export type EngineVersion = "v1" | "v2";
 
 export const DEPTH_MAP: Record<Difficulty, number> = {
