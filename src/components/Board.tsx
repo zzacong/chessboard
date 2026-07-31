@@ -1,4 +1,5 @@
 import type { Square } from "chess.js";
+import type React from "react";
 
 import { Chess } from "chess.js";
 
@@ -7,6 +8,21 @@ import { cn } from "@/lib/cn";
 import { useChessStore } from "@/store/chessStore";
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;
+
+// Static style objects hoisted to module level so they are not recreated on every render.
+const GRID_STYLE: React.CSSProperties = {
+  gridTemplateColumns: "repeat(8, var(--sq-size))",
+  gridTemplateRows: "repeat(8, var(--sq-size))",
+  border: "3px solid #3a2510",
+  boxShadow: "0 12px 48px rgba(0,0,0,0.7), 0 4px 12px rgba(0,0,0,0.4)",
+};
+const PIECE_WRAPPER_BASE: React.CSSProperties = { width: "88%", height: "88%" };
+const PIECE_WRAPPER_SELECTED: React.CSSProperties = {
+  width: "88%",
+  height: "88%",
+  transform: "scale(1.1)",
+  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.5))",
+};
 
 // Build ordered square names for the board (rank 8→1 for white, rank 1→8 for black)
 function buildSquares(flipped: boolean): Square[] {
@@ -27,7 +43,6 @@ export function Board() {
   const legalMoveSquares = useChessStore((s) => s.legalMoveSquares);
   const lastMove = useChessStore((s) => s.lastMove);
   const playerColor = useChessStore((s) => s.playerColor);
-  const isComputerThinking = useChessStore((s) => s.isComputerThinking);
   const selectSquare = useChessStore((s) => s.selectSquare);
 
   const game = new Chess(fen);
@@ -41,7 +56,7 @@ export function Board() {
     : ["8", "7", "6", "5", "4", "3", "2", "1"];
 
   return (
-    <div className={cn("flex items-start gap-1 select-none", isComputerThinking && "cursor-wait")}>
+    <div className="flex items-start gap-1 select-none">
       {/* Rank labels left */}
       <div className="flex flex-col" style={{ height: "calc(var(--sq-size) * 8)" }}>
         {rankLabels.map((r) => (
@@ -57,15 +72,7 @@ export function Board() {
 
       <div className="flex flex-col">
         {/* Grid */}
-        <div
-          className="grid overflow-hidden rounded-[3px]"
-          style={{
-            gridTemplateColumns: "repeat(8, var(--sq-size))",
-            gridTemplateRows: "repeat(8, var(--sq-size))",
-            border: "3px solid #3a2510",
-            boxShadow: "0 12px 48px rgba(0,0,0,0.7), 0 4px 12px rgba(0,0,0,0.4)",
-          }}
-        >
+        <div className="grid overflow-hidden rounded-[3px]" style={GRID_STYLE}>
           {squares.map((sq, i) => {
             const fileIdx = i % 8;
             const rankIdx = Math.floor(i / 8);
@@ -107,16 +114,7 @@ export function Board() {
                 {PieceComp && (
                   <div
                     className="pointer-events-none relative z-[2] flex items-center justify-center transition-transform duration-[120ms] ease-out group-hover:scale-[1.08]"
-                    style={{
-                      width: "88%",
-                      height: "88%",
-                      ...(isSelected
-                        ? {
-                            transform: "scale(1.1)",
-                            filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.5))",
-                          }
-                        : {}),
-                    }}
+                    style={isSelected ? PIECE_WRAPPER_SELECTED : PIECE_WRAPPER_BASE}
                   >
                     <PieceComp size={44} />
                   </div>

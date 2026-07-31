@@ -48,12 +48,15 @@ function deriveStatus(g: Chess): GameStatus {
   return "playing";
 }
 
+// Hoisted at module level so the RegExp is compiled once, not on every engine callback.
+const UCI_MOVE_RE = /^([a-h][1-8])([a-h][1-8])([qrbn])?$/;
+
 function parseUciMove(move: string): {
   from: Square;
   to: Square;
   promotion?: "q" | "r" | "b" | "n";
 } | null {
-  const match = move.match(/^([a-h][1-8])([a-h][1-8])([qrbn])?$/);
+  const match = UCI_MOVE_RE.exec(move);
 
   if (!match) return null;
 

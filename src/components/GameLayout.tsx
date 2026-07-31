@@ -3,6 +3,8 @@ import { useRouter } from "@tanstack/react-router";
 import { Board } from "@/components/Board";
 import { Sidebar } from "@/components/Sidebar";
 import { StatusBar } from "@/components/StatusBar";
+import { cn } from "@/lib/cn";
+import { useChessStore } from "@/store/chessStore";
 
 interface GameLayoutProps {
   badge: string;
@@ -10,6 +12,7 @@ interface GameLayoutProps {
 
 export function GameLayout({ badge }: GameLayoutProps) {
   const router = useRouter();
+  const isComputerThinking = useChessStore((s) => s.isComputerThinking);
 
   function handleNewGame() {
     void router.navigate({ to: "/" });
@@ -47,7 +50,12 @@ export function GameLayout({ badge }: GameLayoutProps) {
 
       <main className="flex flex-1 items-start justify-center px-5 pt-6 pb-10">
         <div className="flex items-start gap-5 max-sm:w-full max-sm:flex-col max-sm:items-center">
-          <div className="flex flex-col items-start gap-3 max-sm:w-full max-sm:items-center">
+          <div
+            className={cn(
+              "flex flex-col items-start gap-3 max-sm:w-full max-sm:items-center",
+              isComputerThinking && "cursor-wait",
+            )}
+          >
             <StatusBar />
             <Board />
           </div>
