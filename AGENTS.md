@@ -6,6 +6,8 @@ This file provides guidance to agents when working with code in this repository.
 
 **Keep this file current.** Whenever tooling, scripts, or stack configuration changes — e.g. adding a package, changing a `pnpm` script, adding a test framework, updating a tsconfig option — check whether any section of `AGENTS.md` is now stale and update it in the same commit/task. Common triggers:
 
+> **Plans** live in `.plans/` as `NN-kebab-name.md` (e.g. `.plans/08-my-feature.md`). Ignore all files under `.plans/` when syncing docs — they contain historical or completed work.
+
 - `package.json` scripts added, renamed, or removed → update **Commands**
 - New dev dependency that affects workflow (linter, formatter, test runner, bundler) → update **Stack** and **Commands**
 - `tsconfig*.json` compiler option changes → update relevant **Key Patterns** bullets
