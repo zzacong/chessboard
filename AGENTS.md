@@ -59,7 +59,7 @@ Within components, type imports from `chess.js` precede value imports; internal 
 - **TanStack Router** — routing is file-based under `src/routes/`. Route types are auto-generated into `src/routeTree.gen.ts` by the `@tanstack/router-plugin` Vite plugin on `pnpm dev`. Both `/v1/game` and `/v2/game` have a `beforeLoad` guard that checks `getChessState().gameStarted` and redirects to `/` if the game has not been started.
 - **Path aliases** — `@/` maps to `src/` (configured via `resolve.tsconfigPaths` in `vite.config.ts`). Always use `@/` for non-relative imports within `src/`.
 - **`verbatimModuleSyntax: true`** — all type-only imports must use `import type { ... }`, not `import { type ... }`.
-- **`erasableSyntaxOnly: true`** — TypeScript `enum` and namespace declarations are forbidden; use `const` object maps instead (see `DEPTH_MAP` in `src/types.ts`).
+- **`erasableSyntaxOnly: true`** — TypeScript `enum` and namespace declarations are forbidden; use `const` object maps instead (see `DEPTH_MAP`, `ELO_MAP` in `src/types.ts`).
 - **`noUnusedLocals` / `noUnusedParameters`** — the compiler rejects unused variables and parameters; prefix with `_` if intentionally unused.
 
 ## Architecture
@@ -85,5 +85,5 @@ main.tsx
 - `src/routes/index.tsx` owns the full setup UI (engine version, mode, color, difficulty pickers). On start it calls `resetGame(...)` then navigates to `/v1/game` or `/v2/game` depending on the chosen engine.
 - `GameLayout` (`src/components/GameLayout.tsx`) is the shared game UI shell (header, board, sidebar). It receives a `badge` string (e.g. `"v1 · Minimax"`) from the route component and exposes a "New Game" action that navigates back to `/`.
 - `src/routeTree.gen.ts` is generated automatically — do not edit by hand.
-- `src/types.ts` is the single source of truth for shared types and constants (`DEPTH_MAP`, `SKILL_MAP`, `GameStatus`, etc.).
+- `src/types.ts` is the single source of truth for shared types and constants (`DEPTH_MAP`, `ELO_MAP`, `MOVETIME_MAP`, `GameStatus`, etc.).
 - Pawn promotion is always auto-promoted to queen (`promotion: "q"`).

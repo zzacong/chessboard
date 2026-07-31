@@ -14,10 +14,18 @@ export const DEPTH_MAP: Record<Difficulty, number> = {
   hard: 5,
 };
 
-export const SKILL_MAP: Record<Difficulty, number> = {
-  easy: 3,
-  medium: 10,
-  hard: 20,
+// Stockfish v2: UCI_LimitStrength + UCI_Elo targets
+export const ELO_MAP: Record<Difficulty, number> = {
+  easy: 1320,
+  medium: 1800,
+  hard: 2800,
+};
+
+// Stockfish v2: milliseconds per move (go movetime)
+export const MOVETIME_MAP: Record<Difficulty, number> = {
+  easy: 200,
+  medium: 500,
+  hard: 1500,
 };
 
 export interface CapturedPieces {

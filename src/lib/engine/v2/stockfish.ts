@@ -6,7 +6,7 @@ export class StockfishEngine implements Engine {
   private worker: Worker;
   private listeners = new Set<Listener>();
   private booted: Promise<void>;
-  private currentSkill = -1;
+  private currentElo = -1;
   private cancelCurrentSearch: (() => void) | null = null;
 
   constructor() {
@@ -54,15 +54,16 @@ export class StockfishEngine implements Engine {
   async getBestMove(fen: string, opts: EngineOptions): Promise<string | null> {
     await this.booted;
 
-    if (opts.skillLevel !== this.currentSkill) {
-      this.send(`setoption name Skill Level value ${opts.skillLevel}`);
-      this.currentSkill = opts.skillLevel;
+    if (opts.elo !== this.currentElo) {
+      this.send(`setoption name UCI_LimitStrength value true`);
+      this.send(`setoption name UCI_Elo value ${opts.elo}`);
+      this.currentElo = opts.elo;
     }
 
     this.send(`position fen ${fen}`);
     await this.isReady();
 
-    const limit = `depth ${opts.depth ?? 12}`;
+    const limit = `movetime ${opts.movetime}`;
 
     return new Promise((resolve) => {
       const onLine: Listener = (line) => {

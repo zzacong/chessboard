@@ -17,7 +17,7 @@ import type {
 } from "@/types";
 
 import { getEngine } from "@/lib/engine";
-import { DEPTH_MAP, SKILL_MAP } from "@/types";
+import { DEPTH_MAP, ELO_MAP, MOVETIME_MAP } from "@/types";
 
 // ── Module-level non-reactive state ──────────────────────────────────────────
 // These don't need to trigger re-renders so they live outside Zustand.
@@ -162,7 +162,8 @@ const chessStore = createStore<ChessStore>()(
         const activeDifficulty = game.turn() === "b" ? difficultyBlack : difficulty;
         const opts: EngineOptions = {
           depth: DEPTH_MAP[activeDifficulty],
-          skillLevel: SKILL_MAP[activeDifficulty],
+          elo: ELO_MAP[activeDifficulty],
+          movetime: MOVETIME_MAP[activeDifficulty],
         };
 
         getEngine(engineVersion)

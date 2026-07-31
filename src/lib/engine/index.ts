@@ -7,8 +7,9 @@ import { getMinimax } from "./v1/minimaxEngine";
 import { getStockfish } from "./v2/stockfish";
 
 export type EngineOptions = {
-  depth: number; // used by MinimaxEngine
-  skillLevel: number; // used by StockfishEngine (0–20)
+  depth: number; // used by MinimaxEngine (v1)
+  elo: number; // used by StockfishEngine (v2) — UCI_Elo target
+  movetime: number; // used by StockfishEngine (v2) — ms per move
 };
 
 export interface Engine {

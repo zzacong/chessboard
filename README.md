@@ -5,7 +5,7 @@ A browser-based chess game (Player vs Computer) built with React, TypeScript, an
 ## Features
 
 - **Three game modes** — vs Computer, Local 2 Player (hot-seat), and CPU vs CPU (watch two AIs play)
-- **Two engines** — Minimax v1 (alpha-beta pruning, configurable depth) and Stockfish v2 (UCI, skill-level 0–20)
+- **Two engines** — Minimax v1 (alpha-beta pruning, configurable depth) and Stockfish v2 (UCI, `UCI_LimitStrength` + `UCI_Elo`, time-limited search)
 - **Three difficulty levels** — Easy, Medium, and Hard for each engine/side
 - **Choose your colour** — play as White or Black before each game (or set independent difficulty per side in CPU vs CPU)
 - **AI runs off the main thread** — both engines use Web Workers so the UI stays responsive
@@ -29,18 +29,18 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Scripts
 
-| Command            | Description                                             |
-| ------------------ | ------------------------------------------------------- |
-| `pnpm dev`         | Start development server (also runs TanStack Router codegen) |
-| `pnpm build`       | Type-check and build for production                     |
-| `pnpm preview`     | Preview the production build locally                    |
-| `pnpm typecheck`   | Run TypeScript type checking                            |
-| `pnpm lint`        | Lint with oxlint                                        |
-| `pnpm fmt`         | Format with oxfmt (auto-fix)                            |
-| `pnpm fmt:check`   | Check formatting without writing                        |
-| `pnpm test`        | Run tests once (Vitest)                                 |
-| `pnpm test:watch`  | Run tests in watch mode                                 |
-| `pnpm check`       | Full validation gate (fmt:check + typecheck + lint + test) |
+| Command           | Description                                                  |
+| ----------------- | ------------------------------------------------------------ |
+| `pnpm dev`        | Start development server (also runs TanStack Router codegen) |
+| `pnpm build`      | Type-check and build for production                          |
+| `pnpm preview`    | Preview the production build locally                         |
+| `pnpm typecheck`  | Run TypeScript type checking                                 |
+| `pnpm lint`       | Lint with oxlint                                             |
+| `pnpm fmt`        | Format with oxfmt (auto-fix)                                 |
+| `pnpm fmt:check`  | Check formatting without writing                             |
+| `pnpm test`       | Run tests once (Vitest)                                      |
+| `pnpm test:watch` | Run tests in watch mode                                      |
+| `pnpm check`      | Full validation gate (fmt:check + typecheck + lint + test)   |
 
 ## Tech Stack
 
@@ -59,7 +59,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ```
 src/
 ├── main.tsx                 # App entry point — mounts RouterProvider
-├── types.ts                 # Shared types and constants (DEPTH_MAP, SKILL_MAP, GameStatus…)
+├── types.ts                 # Shared types and constants (DEPTH_MAP, ELO_MAP, MOVETIME_MAP, GameStatus…)
 ├── index.css                # Design tokens, board square classes, keyframes
 ├── routes/
 │   ├── __root.tsx           # Root layout
@@ -91,10 +91,10 @@ All game state lives in the Zustand store ([`src/store/chessStore.ts`](src/store
 
 Both engines implement a common [`Engine`](src/lib/engine/index.ts) interface and are selected at game start via `getEngine(version)`. When a computer move is needed, the store calls `engine.getBestMove(fen, opts)` — a Promise that resolves when the worker responds. Stale responses are discarded via a monotonic `msgId` / `pendingMsgId` pair.
 
-Difficulty maps to search depth (Minimax v1) or skill level (Stockfish v2):
+Difficulty maps to search depth (Minimax v1) or UCI Elo + movetime (Stockfish v2):
 
-| Difficulty | Minimax depth | Stockfish skill |
-| ---------- | ------------- | --------------- |
-| Easy       | 1             | 3               |
-| Medium     | 3             | 10              |
-| Hard       | 5             | 20              |
+| Difficulty | Minimax depth | Stockfish UCI_Elo | Stockfish movetime |
+| ---------- | ------------- | ----------------- | ------------------ |
+| Easy       | 1             | 1320              | 200 ms             |
+| Medium     | 3             | 1800              | 500 ms             |
+| Hard       | 5             | 2800              | 1500 ms            |

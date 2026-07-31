@@ -38,9 +38,9 @@ const DEPTH_DESCS: Record<Difficulty, string> = {
   hard: "Depth 5",
 };
 const SKILL_DESCS: Record<Difficulty, string> = {
-  easy: "Skill 3",
-  medium: "Skill 10",
-  hard: "Skill 20",
+  easy: "~1320 Elo",
+  medium: "~1800 Elo",
+  hard: "~2800 Elo",
 };
 
 function DifficultyPicker({
