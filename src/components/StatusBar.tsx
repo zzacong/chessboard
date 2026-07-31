@@ -75,14 +75,14 @@ function statusMessage(
 const indicatorColor: Record<MsgType, string> = {
   normal: "var(--color-success)",
   warning: "var(--color-accent-2)",
-  danger: "var(--color-accent)",
+  danger: "var(--color-danger)",
   success: "var(--color-success)",
 };
 
 const messageColor: Record<MsgType, string> = {
   normal: "var(--color-text)",
   warning: "var(--color-accent-2)",
-  danger: "var(--color-accent)",
+  danger: "var(--color-danger)",
   success: "var(--color-success)",
 };
 
@@ -114,44 +114,39 @@ export function StatusBar({ onNewGame }: StatusBarProps) {
     modeChip = `${playerColor === "w" ? "♔ White" : "♚ Black"} · ${DIFFICULTY_LABELS[difficulty]}`;
   }
 
+  const btnBase =
+    "rounded border border-border bg-transparent px-3.5 py-1.5 text-[12px] font-semibold whitespace-nowrap text-text-muted transition-[border-color,color] duration-100 hover:border-border-2 hover:text-text";
+
   return (
-    <div className="flex w-full items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-2.5">
-      <div className="flex min-w-0 items-center gap-2.5">
+    <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3.5 py-2">
+      <div className="flex min-w-0 items-center gap-2">
         <span
-          className={cn("h-2 w-2 shrink-0 rounded-full", blink && "animate-blink")}
+          className={cn("h-1.5 w-1.5 shrink-0 rounded-full", blink && "animate-blink")}
           style={{ background: indicatorColor[msg.type] }}
         />
         <span
-          className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap"
+          className="overflow-hidden text-[13px] font-medium text-ellipsis whitespace-nowrap"
           style={{ color: messageColor[msg.type] }}
         >
           {msg.text}
         </span>
       </div>
-      <div className="flex shrink-0 items-center gap-3">
-        <span className="text-xs whitespace-nowrap text-text-muted">{modeChip}</span>
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="text-[11px] whitespace-nowrap text-text-muted">{modeChip}</span>
         {canUndo && (
-          <button
-            className="rounded-lg border border-border bg-transparent px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap text-text transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
-            onClick={undoMove}
-          >
+          <button className={btnBase} onClick={undoMove}>
             Undo
           </button>
         )}
         {gameMode === "computer-vs-computer" && !isOver && (
-          <button
-            className="rounded-lg border border-border bg-transparent px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap text-text transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5"
-            onClick={togglePause}
-          >
+          <button className={btnBase} onClick={togglePause}>
             {isPaused ? "Resume" : "Pause"}
           </button>
         )}
         <button
           className={cn(
-            "rounded-lg bg-transparent px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-[border-color,background,box-shadow] duration-150 hover:bg-white/5",
-            isOver
-              ? "animate-pulse-border border border-accent text-accent"
-              : "border border-border text-text",
+            btnBase,
+            isOver && "animate-pulse-border border-accent text-accent hover:text-accent",
           )}
           onClick={onNewGame}
         >

@@ -80,62 +80,62 @@ export function Sidebar() {
   const diff = playerScore - computerScore;
 
   return (
-    <div className="flex w-[220px] min-w-[180px] flex-col gap-4">
+    <div className="flex w-[210px] min-w-[170px] flex-col gap-3">
       {/* Captured pieces */}
-      <section className="rounded-[10px] border border-border bg-surface px-3.5 pt-3.5 pb-3">
+      <section className="rounded-lg border border-border bg-surface px-3.5 pt-3.5 pb-3">
         <h3 className={sectionTitleClass}>Captured</h3>
         <CapturedRow pieces={capturedPieces[playerColor]} color={computerColor} label="You" />
         <CapturedRow pieces={capturedPieces[computerColor]} color={playerColor} label="CPU" />
         {diff !== 0 && (
-          <div className="mt-1 text-right text-xs font-semibold text-accent-2">
-            {diff > 0 ? `+${diff}` : diff} material
+          <div
+            className="mt-1.5 text-right text-[11px] font-semibold"
+            style={{ color: "var(--color-accent)" }}
+          >
+            {diff > 0 ? `+${diff}` : diff}
           </div>
         )}
       </section>
 
       {/* Move history */}
-      <section className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-border bg-surface px-3.5 pt-3.5 pb-3">
+      <section className="flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-surface px-3.5 pt-3.5 pb-3">
         <h3 className={sectionTitleClass}>Moves</h3>
         <div
-          className="flex max-h-[380px] flex-col gap-0.5 overflow-y-auto"
+          className="flex max-h-[380px] flex-col gap-px overflow-y-auto"
           style={{
             scrollbarWidth: "thin",
             scrollbarColor: "var(--color-border) transparent",
           }}
         >
           {paired.length === 0 && (
-            <span className="text-xs text-text-muted opacity-50">No moves yet</span>
+            <span className="text-[12px] text-text-muted opacity-40">No moves yet</span>
           )}
           {paired.map(([white, black], idx) => (
             <div
               key={idx}
               className={cn(
-                "grid items-center gap-0.5 rounded px-1 py-0.5 text-[13px]",
-                idx === paired.length - 1 && "bg-white/5",
+                "grid items-center rounded px-1 py-[3px]",
+                idx === paired.length - 1 && "bg-white/[0.04]",
               )}
-              style={{ gridTemplateColumns: "28px 1fr 1fr" }}
+              style={{ gridTemplateColumns: "24px 1fr 1fr" }}
             >
-              <span className="pr-1 text-right text-[11px] text-text-muted">{idx + 1}.</span>
+              <span className="text-right text-[10px] text-text-muted">{idx + 1}</span>
               <span
-                className="rounded-[3px] px-1.5 py-0.5 font-mono text-[13px]"
-                style={{ color: "var(--sq-light)" }}
+                className="px-1.5 font-mono text-[12px]"
+                style={{ color: "var(--sq-light)", opacity: 0.85 }}
               >
                 {white}
               </span>
               {black && (
-                <span
-                  className="rounded-[3px] px-1.5 py-0.5 font-mono text-[13px]"
-                  style={{ color: "var(--sq-dark)" }}
-                >
+                <span className="px-1.5 font-mono text-[12px]" style={{ color: "var(--sq-dark)" }}>
                   {black}
                 </span>
               )}
             </div>
           ))}
           {isComputerThinking && (
-            <div className="px-1 py-1">
-              <span className="animate-pulse-opacity text-xs text-text-muted italic">
-                CPU thinking…
+            <div className="px-1 py-1.5">
+              <span className="animate-pulse-opacity text-[11px] text-text-muted italic">
+                Thinking…
               </span>
             </div>
           )}

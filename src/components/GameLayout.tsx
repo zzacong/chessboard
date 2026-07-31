@@ -16,27 +16,23 @@ export function GameLayout({ badge }: GameLayoutProps) {
   }
 
   return (
-    <div
-      className="flex min-h-screen flex-col bg-bg"
-      style={{
-        backgroundImage:
-          "radial-gradient(ellipse 60% 50% at 20% 20%, rgba(30,45,82,0.4) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 80% 80%, rgba(233,69,96,0.06) 0%, transparent 60%)",
-      }}
-    >
+    <div className="flex min-h-screen flex-col bg-bg">
       <header
-        className="sticky top-0 z-10 flex h-[52px] items-center justify-between border-b border-border px-6 backdrop-blur-sm"
-        style={{ background: "rgba(22,33,62,0.8)" }}
+        className="sticky top-0 z-10 flex h-[50px] items-center border-b border-border px-6 backdrop-blur-sm"
+        style={{ background: "rgba(26,25,24,0.85)" }}
       >
-        <span className="flex items-center gap-2 text-[17px] font-bold tracking-tight text-text">
-          <span
-            className="inline-block h-2 w-2 rounded-full bg-accent"
-            style={{ boxShadow: "0 0 8px var(--color-accent)" }}
-          />
-          Chess <span className="text-[12px] font-normal text-text-muted">{badge}</span>
+        <span className="wordmark text-[18px] text-text" style={{ lineHeight: 1 }}>
+          Chess
+        </span>
+        <span
+          className="ml-2 rounded-sm px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.1em] text-text-muted uppercase"
+          style={{ background: "var(--color-surface-2)" }}
+        >
+          {badge}
         </span>
       </header>
 
-      <main className="flex flex-1 items-start justify-center px-5 pt-7 pb-10">
+      <main className="flex flex-1 items-start justify-center px-5 pt-6 pb-10">
         <div className="flex items-start gap-5 max-sm:w-full max-sm:flex-col max-sm:items-center">
           <div className="flex flex-col items-start gap-3 max-sm:w-full max-sm:items-center">
             <StatusBar onNewGame={handleNewGame} />
