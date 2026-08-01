@@ -8,7 +8,13 @@ interface PieceProps {
 // ── WHITE KING ────────────────────────────────────────────────────────────────
 export function WKing({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g
         fill="none"
         fillRule="evenodd"
@@ -39,7 +45,13 @@ export function WKing({ size = 45 }: PieceProps) {
 // ── WHITE QUEEN ───────────────────────────────────────────────────────────────
 export function WQueen({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="#fff" stroke="#000" strokeWidth="1.5" strokeLinejoin="round">
         <circle cx="6" cy="12" r="2.75" />
         <circle cx="14" cy="9" r="2.75" />
@@ -68,7 +80,13 @@ export function WQueen({ size = 45 }: PieceProps) {
 // ── WHITE ROOK ────────────────────────────────────────────────────────────────
 export function WRook({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="#fff" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path
           d="M9 39h27v-3H9v3zM12 36v-4h21v4H12zM11 14V9h4v2h5V9h5v2h5V9h4v5"
@@ -86,7 +104,13 @@ export function WRook({ size = 45 }: PieceProps) {
 // ── WHITE BISHOP ──────────────────────────────────────────────────────────────
 export function WBishop({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="none" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <g fill="#fff" strokeLinecap="butt">
           <path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2z" />
@@ -102,7 +126,13 @@ export function WBishop({ size = 45 }: PieceProps) {
 // ── WHITE KNIGHT ──────────────────────────────────────────────────────────────
 export function WKnight({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="none" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 10c10.5 1 16.5 8 16 29H15c0-9 10-6.5 8-21" fill="#fff" />
         <path d="M24 18c.38 5.12-4.5 8.63-5 14" fill="none" stroke="#000" />
@@ -123,7 +153,13 @@ export function WKnight({ size = 45 }: PieceProps) {
 // ── WHITE PAWN ────────────────────────────────────────────────────────────────
 export function WPawn({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <path
         d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03C15.41 27.09 11 31.58 11 39.5H34c0-7.92-4.41-12.41-7.41-13.47C28.06 24.84 29 23.03 29 21c0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"
         fill="#fff"
@@ -138,7 +174,13 @@ export function WPawn({ size = 45 }: PieceProps) {
 // ── BLACK KING ────────────────────────────────────────────────────────────────
 export function BKing({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g
         fill="none"
         fillRule="evenodd"
@@ -176,7 +218,13 @@ export function BKing({ size = 45 }: PieceProps) {
 // ── BLACK QUEEN ───────────────────────────────────────────────────────────────
 export function BQueen({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="#000" stroke="#000" strokeWidth="1.5" strokeLinejoin="round">
         <circle cx="6" cy="12" r="2.75" />
         <circle cx="14" cy="9" r="2.75" />
@@ -205,7 +253,13 @@ export function BQueen({ size = 45 }: PieceProps) {
 // ── BLACK ROOK ────────────────────────────────────────────────────────────────
 export function BRook({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="#000" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path
           d="M9 39h27v-3H9v3zM12.5 32l1.5-2.5h17l1.5 2.5h-20zM12 36v-4h21v4H12z"
@@ -231,7 +285,13 @@ export function BRook({ size = 45 }: PieceProps) {
 // ── BLACK BISHOP ──────────────────────────────────────────────────────────────
 export function BBishop({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="none" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <g fill="#000" strokeLinecap="butt">
           <path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2z" />
@@ -247,7 +307,13 @@ export function BBishop({ size = 45 }: PieceProps) {
 // ── BLACK KNIGHT ──────────────────────────────────────────────────────────────
 export function BKnight({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <g fill="none" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 10c10.5 1 16.5 8 16 29H15c0-9 10-6.5 8-21" fill="#000" />
         <path d="M24 18c.38 5.12-4.5 8.63-5 14" fill="none" stroke="#fff" />
@@ -268,7 +334,13 @@ export function BKnight({ size = 45 }: PieceProps) {
 // ── BLACK PAWN ────────────────────────────────────────────────────────────────
 export function BPawn({ size = 45 }: PieceProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      aria-hidden="true"
+    >
       <path
         d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03C15.41 27.09 11 31.58 11 39.5H34c0-7.92-4.41-12.41-7.41-13.47C28.06 24.84 29 23.03 29 21c0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"
         fill="#000"

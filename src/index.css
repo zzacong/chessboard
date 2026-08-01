@@ -14,6 +14,11 @@
   --color-danger: #c0392b;
 }
 
+/* ── Color scheme (fixes scrollbar, inputs, system widgets) ── */
+html {
+  color-scheme: dark;
+}
+
 /* ── Design tokens (still used by Board squares & keyframes) ── */
 :root {
   --color-bg: #111010;

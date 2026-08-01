@@ -151,9 +151,9 @@ export function Sidebar() {
             </div>
           ))}
           {isComputerThinking && (
-            <div className="px-1 py-1.5">
+            <div className="px-1 py-1.5" aria-live="polite" aria-atomic="true">
               <span className="animate-pulse-opacity font-mono text-[11px] text-text-muted italic">
-                thinking...
+                thinking…
               </span>
             </div>
           )}

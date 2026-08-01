@@ -56,7 +56,7 @@ export function Board() {
     : ["8", "7", "6", "5", "4", "3", "2", "1"];
 
   return (
-    <div className="flex items-start gap-1 select-none">
+    <div className="flex items-start gap-1 select-none" style={{ touchAction: "manipulation" }}>
       {/* Rank labels left */}
       <div className="flex flex-col" style={{ height: "calc(var(--sq-size) * 8)" }}>
         {rankLabels.map((r) => (
