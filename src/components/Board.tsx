@@ -124,7 +124,7 @@ export function Board() {
                 role="button"
                 aria-label={squareLabel}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === "Enter" && selectSquare(sq)}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && selectSquare(sq)}
               >
                 {/* hover overlay */}
                 <span className="pointer-events-none absolute inset-0 z-[4] bg-white/[0.12] opacity-0 group-hover:opacity-100" />

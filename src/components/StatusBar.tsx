@@ -31,7 +31,7 @@ function statusMessage(
       return { text: `Check - ${turnName}'s king is in danger`, type: "danger" };
     }
     if (isPaused) return { text: "Paused", type: "warning" };
-    return { text: `${turnName} is thinking...`, type: "normal" };
+    return { text: `${turnName} is thinking…`, type: "normal" };
   }
 
   if (gameMode === "multiplayer") {
@@ -62,7 +62,7 @@ function statusMessage(
       ? { text: "Check - Your king is in danger", type: "danger" }
       : { text: "Check!", type: "warning" };
   }
-  if (isComputerThinking) return { text: "Computer is thinking...", type: "normal" };
+  if (isComputerThinking) return { text: "Computer is thinking…", type: "normal" };
   return turn === playerColor
     ? { text: "Your turn", type: "normal" }
     : { text: "Computer's turn", type: "normal" };
@@ -143,12 +143,12 @@ export function StatusBar() {
           aria-hidden="true"
         />
         {canUndo && (
-          <button className={btnBase} onClick={undoMove}>
+          <button className={btnBase} onClick={undoMove} aria-label="Undo last move">
             Undo
           </button>
         )}
         {gameMode === "computer-vs-computer" && !isOver && (
-          <button className={btnBase} onClick={togglePause}>
+          <button className={btnBase} onClick={togglePause} aria-pressed={isPaused}>
             {isPaused ? "Resume" : "Pause"}
           </button>
         )}

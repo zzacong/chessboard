@@ -115,6 +115,7 @@ export function Sidebar() {
           style={{
             scrollbarWidth: "thin",
             scrollbarColor: "var(--color-border) transparent",
+            overscrollBehavior: "contain",
           }}
         >
           {paired.length === 0 && (

@@ -105,9 +105,9 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-2.5 flex items-center gap-2">
       <span className="block h-px flex-1" style={{ background: "var(--color-border)" }} />
-      <span className="text-[10px] font-semibold tracking-[0.14em] text-text-muted uppercase">
+      <h2 className="text-[10px] font-semibold tracking-[0.14em] text-text-muted uppercase">
         {children}
-      </span>
+      </h2>
       <span className="block h-px flex-1" style={{ background: "var(--color-border)" }} />
     </div>
   );
@@ -138,13 +138,14 @@ function IndexPage() {
       <div className="w-full max-w-[420px]">
         {/* Wordmark */}
         <div className="mb-8 text-center">
-          <div className="mb-3 flex items-center justify-center gap-3" aria-hidden="true">
+          <div className="mb-3 flex items-center justify-center gap-3">
             <span
               className="h-px max-w-[60px] flex-1"
               style={{ background: "var(--color-border-2)" }}
             />
             <span
               className="text-[52px] leading-none select-none"
+              aria-hidden="true"
               style={{
                 color: "var(--sq-light)",
                 opacity: 0.8,
@@ -256,7 +257,10 @@ function IndexPage() {
             <section className="mb-5">
               <div className="mb-4">
                 <SectionLabel>
-                  White <span style={{ color: "var(--sq-light)", opacity: 0.85 }}>♔</span>
+                  White{" "}
+                  <span aria-hidden="true" style={{ color: "var(--sq-light)", opacity: 0.85 }}>
+                    ♔
+                  </span>
                 </SectionLabel>
                 <DifficultyPicker
                   selected={difficulty}
@@ -266,7 +270,10 @@ function IndexPage() {
               </div>
               <div>
                 <SectionLabel>
-                  Black <span style={{ color: "var(--sq-dark)" }}>♚</span>
+                  Black{" "}
+                  <span aria-hidden="true" style={{ color: "var(--sq-dark)" }}>
+                    ♚
+                  </span>
                 </SectionLabel>
                 <DifficultyPicker
                   selected={difficultyBlack}
