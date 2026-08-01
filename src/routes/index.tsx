@@ -59,7 +59,7 @@ function OptionButton({
         "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-3 text-center transition-[border-color,background-color,color,box-shadow,transform] duration-150",
         selected
           ? "border-accent bg-accent/10 text-text shadow-[0_0_0_1px_var(--color-accent)]"
-          : "border-border bg-surface-2 text-text-muted hover:border-border-2 hover:bg-surface-2/80 hover:text-text active:scale-[0.98]",
+          : "border-border bg-surface-2 text-text-muted hover:border-border-2 hover:bg-surface-2/80 hover:text-text active:scale-95",
       )}
       onClick={onClick}
       aria-pressed={selected}
@@ -93,8 +93,8 @@ function DifficultyPicker({
           selected={selected === d.value}
           onClick={() => onChange(d.value)}
         >
-          <span className="text-[13px] leading-tight font-semibold">{d.label}</span>
-          <span className="text-[11px] leading-tight">{descs[d.value]}</span>
+          <span className="text-sm leading-tight font-semibold">{d.label}</span>
+          <span className="text-xs leading-tight">{descs[d.value]}</span>
         </OptionButton>
       ))}
     </div>
@@ -103,9 +103,9 @@ function DifficultyPicker({
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-2.5 flex items-center gap-2">
+    <div className="mb-3 flex items-center gap-2">
       <span className="block h-px flex-1 bg-border" />
-      <h2 className="text-[10px] font-semibold tracking-[0.14em] text-text-muted uppercase">
+      <h2 className="text-xs font-semibold tracking-widest text-text-muted uppercase">
         {children}
       </h2>
       <span className="block h-px flex-1 bg-border" />
@@ -144,15 +144,15 @@ function IndexPage() {
           <div className="mb-3 flex items-center justify-center gap-3">
             <span className="h-px max-w-15 flex-1 bg-border-2" />
             <span
-              className="text-[52px] leading-none text-accent opacity-85 select-none"
+              className="text-6xl leading-none text-accent opacity-85 select-none"
               aria-hidden="true"
             >
               ♛
             </span>
             <span className="h-px max-w-15 flex-1 bg-border-2" />
           </div>
-          <h1 className="wordmark text-[42px] leading-none font-normal text-text">Chess</h1>
-          <p className="mt-2 text-[13px] tracking-wide text-text-muted">Configure your match</p>
+          <h1 className="wordmark text-5xl leading-none font-normal text-text">Chess</h1>
+          <p className="mt-2 text-sm tracking-wide text-text-muted">Configure your match</p>
         </div>
 
         {/* Setup card */}
@@ -167,8 +167,8 @@ function IndexPage() {
                   selected={gameMode === m.value}
                   onClick={() => setGameMode(m.value)}
                 >
-                  <span className="text-[12px] leading-tight font-semibold">{m.label}</span>
-                  <span className="text-[10px] leading-tight opacity-70">{m.sub}</span>
+                  <span className="text-xs leading-tight font-semibold">{m.label}</span>
+                  <span className="text-xs leading-tight opacity-70">{m.sub}</span>
                 </OptionButton>
               ))}
             </div>
@@ -185,8 +185,8 @@ function IndexPage() {
                     selected={engineVersion === e.value}
                     onClick={() => setEngineVersion(e.value)}
                   >
-                    <span className="text-[13px] font-semibold">{e.label}</span>
-                    <span className="text-[11px] opacity-70">{e.sub}</span>
+                    <span className="text-sm font-semibold">{e.label}</span>
+                    <span className="text-xs opacity-70">{e.sub}</span>
                   </OptionButton>
                 ))}
               </div>
@@ -206,13 +206,13 @@ function IndexPage() {
                   >
                     <span
                       className={cn(
-                        "text-[30px] leading-none opacity-90",
+                        "text-3xl leading-none opacity-90",
                         c.value === "w" ? "text-text" : "text-text-muted",
                       )}
                     >
                       {c.symbol}
                     </span>
-                    <span className="text-[13px] font-semibold">{c.label}</span>
+                    <span className="text-sm font-semibold">{c.label}</span>
                   </OptionButton>
                 ))}
               </div>
@@ -264,7 +264,7 @@ function IndexPage() {
           )}
 
           <button
-            className="w-full rounded-lg bg-accent py-3.5 text-[15px] font-semibold tracking-[0.04em] text-[#1a1210] shadow-[0_4px_20px_rgba(200,160,90,0.25)] transition-[filter,transform] duration-150 hover:brightness-105 active:scale-[0.99] active:brightness-95"
+            className="w-full rounded-lg bg-accent py-4 text-sm font-semibold tracking-wide text-bg shadow-md transition-[filter,transform] duration-150 hover:brightness-105 active:scale-100 active:brightness-95 dark:text-stone-950"
             onClick={handleStart}
           >
             Start Game
@@ -272,7 +272,7 @@ function IndexPage() {
         </div>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-[11px] tracking-wide text-text-muted opacity-45">
+        <p className="mt-6 text-center text-xs tracking-wide text-text-muted opacity-45">
           Pawn promotion auto-queened
         </p>
       </div>

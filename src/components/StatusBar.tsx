@@ -111,14 +111,14 @@ export function StatusBar() {
   }
 
   const btnBase =
-    "rounded border border-border bg-transparent px-3 py-1.5 text-[11px] font-medium whitespace-nowrap text-text-muted transition-[border-color,color,transform] duration-100 hover:border-border-2 hover:text-text active:scale-[0.97]";
+    "rounded border border-border bg-transparent px-3 py-2 text-xs font-medium whitespace-nowrap text-text-muted transition-[border-color,color,transform] duration-100 hover:border-border-2 hover:text-text active:scale-95";
 
   return (
-    <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3.5 py-2.5">
-      <div className="flex min-w-0 items-center gap-2.5">
+    <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-4 py-3">
+      <div className="flex min-w-0 items-center gap-3">
         <span
           className={cn(
-            "h-1.5 w-1.5 shrink-0 rounded-full",
+            "h-2 w-2 shrink-0 rounded-full",
             indicatorClass[msg.type],
             blink && "animate-blink",
           )}
@@ -126,7 +126,7 @@ export function StatusBar() {
         />
         <span
           className={cn(
-            "overflow-hidden text-[13px] font-medium text-ellipsis whitespace-nowrap",
+            "overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap",
             messageClass[msg.type],
           )}
           aria-live={msg.type === "danger" || msg.type === "success" ? "assertive" : "polite"}
@@ -136,7 +136,7 @@ export function StatusBar() {
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <span className="hidden text-[10px] whitespace-nowrap text-text-muted opacity-60 sm:block">
+        <span className="hidden text-xs whitespace-nowrap text-text-muted opacity-60 sm:block">
           {modeChip}
         </span>
         <span className="hidden h-3 w-px bg-border sm:block" aria-hidden="true" />

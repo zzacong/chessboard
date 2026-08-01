@@ -71,7 +71,7 @@ export function Board() {
         {rankLabels.map((r) => (
           <span
             key={r}
-            className="flex w-5 items-center justify-center text-[11px] font-bold tracking-wide text-text-muted"
+            className="flex w-5 items-center justify-center text-xs font-bold tracking-wide text-text-muted"
             style={{ height: "var(--sq-size)" }}
           >
             {r}
@@ -82,7 +82,7 @@ export function Board() {
       <div className="flex flex-col">
         {/* Grid */}
         <div
-          className="grid overflow-hidden rounded-[3px]"
+          className="grid overflow-hidden rounded"
           style={GRID_STYLE}
           role="grid"
           aria-label="Chess board"
@@ -135,7 +135,7 @@ export function Board() {
                 {isLegal && <div className={isCapture ? "legal-ring" : "legal-dot"} />}
                 {PieceComp && (
                   <div
-                    className="pointer-events-none relative z-2 flex items-center justify-center transition-transform duration-120 ease-out group-hover:scale-[1.08]"
+                    className="pointer-events-none relative z-2 flex items-center justify-center transition-transform duration-100 ease-out group-hover:scale-110"
                     style={isSelected ? PIECE_WRAPPER_SELECTED : PIECE_WRAPPER_BASE}
                   >
                     <PieceComp size={44} />
@@ -151,7 +151,7 @@ export function Board() {
           {fileLabels.map((f) => (
             <span
               key={f}
-              className="flex items-center justify-center text-[11px] font-bold tracking-[0.04em] text-text-muted"
+              className="flex items-center justify-center text-xs font-bold tracking-wide text-text-muted"
               style={{ width: "var(--sq-size)" }}
             >
               {f}
