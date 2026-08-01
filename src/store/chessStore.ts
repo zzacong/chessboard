@@ -14,6 +14,7 @@ import type {
   LastMove,
   PieceColor,
   PieceType,
+  Theme,
 } from "@/types";
 
 import { getEngine } from "@/lib/engine";
@@ -67,6 +68,16 @@ function parseUciMove(move: string): {
   };
 }
 
+function getInitialTheme(): Theme {
+  const saved = localStorage.getItem("chess-theme") as Theme | null;
+
+  if (saved === "light" || saved === "dark") {
+    return saved;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
+
 // ── Store types ───────────────────────────────────────────────────────────────
 
 interface ChessState {
@@ -86,6 +97,7 @@ interface ChessState {
   isComputerThinking: boolean;
   isPaused: boolean;
   gameStarted: boolean;
+  theme: Theme;
 }
 
 interface ChessActions {
@@ -101,6 +113,7 @@ interface ChessActions {
   ) => void;
   togglePause: () => void;
   undoMove: () => void;
+  setTheme: (theme: Theme) => void;
 }
 
 type ChessStore = ChessState & ChessActions;
@@ -127,6 +140,13 @@ const chessStore = createStore<ChessStore>()(
       isComputerThinking: false,
       isPaused: false,
       gameStarted: false,
+      theme: getInitialTheme(),
+
+      // ── setTheme ────────────────────────────────────────────────────────────
+      setTheme: (theme) => {
+        localStorage.setItem("chess-theme", theme);
+        set({ theme });
+      },
 
       // ── syncState ───────────────────────────────────────────────────────────
       syncState: () => {

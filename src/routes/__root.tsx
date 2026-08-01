@@ -1,12 +1,21 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import "../index.css";
+
+import { useChessStore } from "@/store/chessStore";
 
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
 function RootComponent() {
+  const theme = useChessStore((s) => s.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   return (
     <>
       <a

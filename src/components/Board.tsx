@@ -22,15 +22,15 @@ const PIECE_NAMES: Record<string, string> = {
 const GRID_STYLE: React.CSSProperties = {
   gridTemplateColumns: "repeat(8, var(--sq-size))",
   gridTemplateRows: "repeat(8, var(--sq-size))",
-  border: "3px solid #3a2510",
-  boxShadow: "0 12px 48px rgba(0,0,0,0.7), 0 4px 12px rgba(0,0,0,0.4)",
+  border: "3px solid var(--board-border)",
+  boxShadow: "0 12px 48px var(--shadow-board), 0 4px 12px var(--shadow-board-2)",
 };
 const PIECE_WRAPPER_BASE: React.CSSProperties = { width: "88%", height: "88%" };
 const PIECE_WRAPPER_SELECTED: React.CSSProperties = {
   width: "88%",
   height: "88%",
   transform: "scale(1.1)",
-  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.5))",
+  filter: "drop-shadow(0 4px 8px var(--shadow-piece))",
 };
 
 // Build ordered square names for the board (rank 8→1 for white, rank 1→8 for black)
@@ -127,7 +127,10 @@ export function Board() {
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && selectSquare(sq)}
               >
                 {/* hover overlay */}
-                <span className="pointer-events-none absolute inset-0 z-[4] bg-white/[0.12] opacity-0 group-hover:opacity-100" />
+                <span
+                  className="pointer-events-none absolute inset-0 z-[4] opacity-0 group-hover:opacity-100"
+                  style={{ background: "var(--hover-overlay)" }}
+                />
 
                 {isLegal && <div className={isCapture ? "legal-ring" : "legal-dot"} />}
                 {PieceComp && (

@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import type { Difficulty, EngineVersion, GameMode, PieceColor } from "@/types";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/cn";
 import { useChessStore } from "@/store/chessStore";
 
@@ -133,8 +134,11 @@ function IndexPage() {
   return (
     <div
       id="main-content"
-      className="flex min-h-[100dvh] items-center justify-center bg-bg px-4 py-10"
+      className="relative flex min-h-[100dvh] items-center justify-center bg-bg px-4 py-10"
     >
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-[420px]">
         {/* Wordmark */}
         <div className="mb-8 text-center">
@@ -170,7 +174,7 @@ function IndexPage() {
           className="rounded-2xl border border-border bg-surface px-6 py-6"
           style={{
             boxShadow:
-              "0 24px 64px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)",
+              "0 24px 64px var(--shadow-board), 0 2px 8px var(--shadow-board-2), inset 0 1px 0 var(--inset-highlight)",
           }}
         >
           {/* Game Mode */}

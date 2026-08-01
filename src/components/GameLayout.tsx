@@ -3,6 +3,7 @@ import { useRouter } from "@tanstack/react-router";
 import { Board } from "@/components/Board";
 import { Sidebar } from "@/components/Sidebar";
 import { StatusBar } from "@/components/StatusBar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/cn";
 import { useChessStore } from "@/store/chessStore";
 
@@ -21,8 +22,8 @@ export function GameLayout({ badge }: GameLayoutProps) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-bg">
       <header
-        className="sticky top-0 z-10 flex h-[56px] items-center gap-3 border-b border-border px-5"
-        style={{ background: "rgba(17,16,16,0.92)", backdropFilter: "blur(12px)" }}
+        className="sticky top-0 z-10 flex h-[56px] items-center gap-3 border-b border-border px-5 backdrop-blur-md"
+        style={{ background: "var(--header-bg)" }}
       >
         <span className="wordmark text-[20px] text-text" style={{ lineHeight: 1 }}>
           Chess
@@ -39,6 +40,7 @@ export function GameLayout({ badge }: GameLayoutProps) {
           {badge}
         </span>
         <div className="flex-1" />
+        <ThemeToggle />
         <button
           className="rounded border border-border bg-transparent px-3 py-1.5 text-[12px] font-medium text-text-muted transition-[border-color,color,transform] duration-100 hover:border-border-2 hover:text-text active:scale-[0.98]"
           onClick={handleNewGame}

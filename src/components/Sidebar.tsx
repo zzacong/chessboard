@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 import type { PieceColor, PieceType } from "@/types";
 
 import { getPieceComponent } from "@/components/pieces/lookup";
-import { cn } from "@/lib/cn";
 import { useChessStore } from "@/store/chessStore";
 
 const PIECE_VALUES_DISPLAY: Record<PieceType, number> = {
@@ -126,11 +125,11 @@ export function Sidebar() {
           {paired.map(([white, black], idx) => (
             <div
               key={idx}
-              className={cn(
-                "grid items-center rounded px-1 py-[3px]",
-                idx === paired.length - 1 && "bg-white/[0.04]",
-              )}
-              style={{ gridTemplateColumns: "24px 1fr 1fr" }}
+              className="grid items-center rounded px-1 py-[3px]"
+              style={{
+                gridTemplateColumns: "24px 1fr 1fr",
+                ...(idx === paired.length - 1 && { background: "var(--last-move-bg)" }),
+              }}
             >
               <span
                 className="text-right font-mono text-[10px] text-text-muted"

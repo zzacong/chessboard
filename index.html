@@ -6,6 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#111010" />
     <title>Chess</title>
+    <!-- ── Theme init: runs before first paint to prevent flash ── -->
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem("chess-theme");
+        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+        const theme =
+          savedTheme === "light" || savedTheme === "dark"
+            ? savedTheme
+            : prefersLight
+              ? "light"
+              : "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
