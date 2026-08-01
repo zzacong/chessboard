@@ -139,12 +139,15 @@ export function Sidebar() {
               </span>
               <span
                 className="px-1.5 font-mono text-[12px]"
-                style={{ color: "var(--sq-light)", opacity: 0.85 }}
+                style={{ color: "var(--color-text)", opacity: 0.85 }}
               >
                 {white}
               </span>
               {black && (
-                <span className="px-1.5 font-mono text-[12px]" style={{ color: "var(--sq-dark)" }}>
+                <span
+                  className="px-1.5 font-mono text-[12px]"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
                   {black}
                 </span>
               )}

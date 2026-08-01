@@ -151,9 +151,8 @@ function IndexPage() {
               className="text-[52px] leading-none select-none"
               aria-hidden="true"
               style={{
-                color: "var(--sq-light)",
-                opacity: 0.8,
-                textShadow: "0 2px 12px rgba(240,217,181,0.25)",
+                color: "var(--color-accent)",
+                opacity: 0.85,
               }}
             >
               ♛
@@ -227,12 +226,8 @@ function IndexPage() {
                     <span
                       className="text-[30px] leading-none"
                       style={{
-                        color: c.value === "w" ? "var(--sq-light)" : "var(--sq-dark)",
+                        color: c.value === "w" ? "var(--color-text)" : "var(--color-text-muted)",
                         opacity: 0.9,
-                        textShadow:
-                          c.value === "w"
-                            ? "0 1px 8px rgba(240,217,181,0.3)"
-                            : "0 1px 8px rgba(181,136,99,0.4)",
                       }}
                     >
                       {c.symbol}
@@ -262,7 +257,7 @@ function IndexPage() {
               <div className="mb-4">
                 <SectionLabel>
                   White{" "}
-                  <span aria-hidden="true" style={{ color: "var(--sq-light)", opacity: 0.85 }}>
+                  <span aria-hidden="true" style={{ color: "var(--color-text)", opacity: 0.85 }}>
                     ♔
                   </span>
                 </SectionLabel>
@@ -275,7 +270,7 @@ function IndexPage() {
               <div>
                 <SectionLabel>
                   Black{" "}
-                  <span aria-hidden="true" style={{ color: "var(--sq-dark)" }}>
+                  <span aria-hidden="true" style={{ color: "var(--color-text-muted)" }}>
                     ♚
                   </span>
                 </SectionLabel>
