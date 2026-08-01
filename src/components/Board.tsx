@@ -1,9 +1,8 @@
 import type { Square } from "chess.js";
 import type React from "react";
 
-import { useCallback, useRef } from "react";
-
 import { Chess } from "chess.js";
+import { useCallback, useRef } from "react";
 
 import { getPieceComponent } from "@/components/pieces/lookup";
 import { cn } from "@/lib/cn";
@@ -73,14 +72,11 @@ export function Board() {
   // Refs to all 64 gridcell elements for programmatic focus
   const cellRefs = useRef<Array<HTMLDivElement | null>>(Array(64).fill(null));
 
-  const moveFocus = useCallback(
-    (newIdx: number) => {
-      const clamped = Math.max(0, Math.min(63, newIdx));
-      focusedIdxRef.current = clamped;
-      cellRefs.current[clamped]?.focus();
-    },
-    [],
-  );
+  const moveFocus = useCallback((newIdx: number) => {
+    const clamped = Math.max(0, Math.min(63, newIdx));
+    focusedIdxRef.current = clamped;
+    cellRefs.current[clamped]?.focus();
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>, idx: number, sq: Square) => {

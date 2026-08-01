@@ -239,8 +239,7 @@ function IndexPage() {
             <section className="mb-5">
               <div className="mb-4">
                 <SectionLabel>
-                  White{" "}
-                  {/* MED-3: aria-hidden so the glyph isn't read by screen readers */}
+                  White {/* MED-3: aria-hidden so the glyph isn't read by screen readers */}
                   <span aria-hidden="true" className="text-text opacity-85">
                     ♔
                   </span>
@@ -253,8 +252,7 @@ function IndexPage() {
               </div>
               <div>
                 <SectionLabel>
-                  Black{" "}
-                  {/* MED-3: aria-hidden so the glyph isn't read by screen readers */}
+                  Black {/* MED-3: aria-hidden so the glyph isn't read by screen readers */}
                   <span aria-hidden="true" className="text-text-muted">
                     ♚
                   </span>

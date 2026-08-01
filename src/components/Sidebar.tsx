@@ -94,7 +94,11 @@ export function Sidebar() {
         <span className="sr-only">
           {`You captured ${capturedPieces[playerColor].length} piece${capturedPieces[playerColor].length !== 1 ? "s" : ""}. `}
           {`CPU captured ${capturedPieces[computerColor].length} piece${capturedPieces[computerColor].length !== 1 ? "s" : ""}. `}
-          {diff > 0 ? `You are ahead by ${diff} point${diff !== 1 ? "s" : ""}.` : diff < 0 ? `CPU is ahead by ${Math.abs(diff)} point${Math.abs(diff) !== 1 ? "s" : ""}.` : "Material is even."}
+          {diff > 0
+            ? `You are ahead by ${diff} point${diff !== 1 ? "s" : ""}.`
+            : diff < 0
+              ? `CPU is ahead by ${Math.abs(diff)} point${Math.abs(diff) !== 1 ? "s" : ""}.`
+              : "Material is even."}
         </span>
         <div className="flex flex-col gap-2" aria-hidden="true">
           <CapturedRow pieces={capturedPieces[playerColor]} color={computerColor} label="You" />
