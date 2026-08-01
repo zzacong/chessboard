@@ -119,10 +119,13 @@ export function StatusBar() {
         <span
           className={cn("h-1.5 w-1.5 shrink-0 rounded-full", blink && "animate-blink")}
           style={{ background: indicatorColor[msg.type] }}
+          aria-hidden="true"
         />
         <span
           className="overflow-hidden text-[13px] font-medium text-ellipsis whitespace-nowrap"
           style={{ color: messageColor[msg.type] }}
+          aria-live={msg.type === "danger" || msg.type === "success" ? "assertive" : "polite"}
+          aria-atomic="true"
         >
           {msg.text}
         </span>

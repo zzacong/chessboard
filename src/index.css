@@ -194,3 +194,15 @@ button {
 .animate-pulse-opacity {
   animation: pulse 1.2s ease-in-out infinite;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .legal-dot,
+  .legal-ring {
+    animation: none;
+  }
+  .animate-blink,
+  .animate-pulse-border,
+  .animate-pulse-opacity {
+    animation: none;
+  }
+}

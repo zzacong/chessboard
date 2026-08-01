@@ -61,6 +61,7 @@ function OptionButton({
           : "border-border bg-surface-2 text-text-muted hover:border-border-2 hover:bg-surface-2/80 hover:text-text active:scale-[0.98]",
       )}
       onClick={onClick}
+      aria-pressed={selected}
     >
       {selected && (
         <span
