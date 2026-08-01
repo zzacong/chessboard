@@ -55,6 +55,7 @@ function OptionButton({
 }) {
   return (
     <button
+      type="button"
       className={cn(
         "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-3 text-center transition-[border-color,background-color,color,box-shadow,transform] duration-150",
         selected
@@ -139,7 +140,7 @@ function IndexPage() {
         <ThemeToggle />
       </div>
       <div className="w-full max-w-105">
-        {/* Wordmark */}
+        {/* Wordmark — h1 comes first in DOM to fix heading order (MED-4) */}
         <div className="mb-8 text-center">
           <div className="mb-3 flex items-center justify-center gap-3">
             <span className="h-px max-w-15 flex-1 bg-border-2" />
@@ -157,7 +158,7 @@ function IndexPage() {
 
         {/* Setup card */}
         <div className="rounded-2xl border border-border bg-surface px-6 py-6 shadow-[0_24px_64px_var(--shadow-board),0_2px_8px_var(--shadow-board-2),inset_0_1px_0_var(--inset-highlight)]">
-          {/* Game Mode */}
+          {/* Game Mode — SectionLabel now uses h3 since h1 is above (MED-4) */}
           <section className="mb-5">
             <SectionLabel>Mode</SectionLabel>
             <div className="flex gap-2">
@@ -204,7 +205,9 @@ function IndexPage() {
                     selected={color === c.value}
                     onClick={() => setColor(c.value)}
                   >
+                    {/* MED-3: aria-hidden on chess glyphs so AT reads only the text label */}
                     <span
+                      aria-hidden="true"
                       className={cn(
                         "text-3xl leading-none opacity-90",
                         c.value === "w" ? "text-text" : "text-text-muted",
@@ -237,6 +240,7 @@ function IndexPage() {
               <div className="mb-4">
                 <SectionLabel>
                   White{" "}
+                  {/* MED-3: aria-hidden so the glyph isn't read by screen readers */}
                   <span aria-hidden="true" className="text-text opacity-85">
                     ♔
                   </span>
@@ -250,6 +254,7 @@ function IndexPage() {
               <div>
                 <SectionLabel>
                   Black{" "}
+                  {/* MED-3: aria-hidden so the glyph isn't read by screen readers */}
                   <span aria-hidden="true" className="text-text-muted">
                     ♚
                   </span>
@@ -264,6 +269,7 @@ function IndexPage() {
           )}
 
           <button
+            type="button"
             className="w-full rounded-lg bg-accent py-4 text-sm font-semibold tracking-wide text-bg shadow-md transition-[filter,transform] duration-150 hover:brightness-105 active:scale-100 active:brightness-95 dark:text-stone-950"
             onClick={handleStart}
           >

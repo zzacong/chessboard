@@ -1,6 +1,8 @@
 import type { Square } from "chess.js";
 import type React from "react";
 
+import { useCallback, useRef } from "react";
+
 import { Chess } from "chess.js";
 
 import { getPieceComponent } from "@/components/pieces/lookup";
@@ -54,6 +56,10 @@ export function Board() {
   const playerColor = useChessStore((s) => s.playerColor);
   const selectSquare = useChessStore((s) => s.selectSquare);
 
+  // Roving tabIndex: track which square index currently owns tabIndex=0.
+  // Starts at the square index that is selected, or 0 otherwise.
+  const focusedIdxRef = useRef<number>(0);
+
   const game = new Chess(fen);
   const flipped = playerColor === "b";
   const squares = buildSquares(flipped);
@@ -64,8 +70,60 @@ export function Board() {
     ? ["1", "2", "3", "4", "5", "6", "7", "8"]
     : ["8", "7", "6", "5", "4", "3", "2", "1"];
 
+  // Refs to all 64 gridcell elements for programmatic focus
+  const cellRefs = useRef<Array<HTMLDivElement | null>>(Array(64).fill(null));
+
+  const moveFocus = useCallback(
+    (newIdx: number) => {
+      const clamped = Math.max(0, Math.min(63, newIdx));
+      focusedIdxRef.current = clamped;
+      cellRefs.current[clamped]?.focus();
+    },
+    [],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>, idx: number, sq: Square) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectSquare(sq);
+        return;
+      }
+      // Arrow key navigation within the grid (row = idx/8, col = idx%8)
+      const col = idx % 8;
+      const row = Math.floor(idx / 8);
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        moveFocus(col < 7 ? idx + 1 : idx - col); // wrap to start of row
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        moveFocus(col > 0 ? idx - 1 : idx + (7 - col)); // wrap to end of row
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        moveFocus(row < 7 ? idx + 8 : col); // wrap to top of column
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        moveFocus(row > 0 ? idx - 8 : 56 + col); // wrap to bottom of column
+      }
+    },
+    [moveFocus, selectSquare],
+  );
+
+  // Build screen-reader announcement for legal moves
+  const legalMovesAnnouncement =
+    selectedSquare && legalMoveSquares.length > 0
+      ? `${selectedSquare} selected. Legal moves: ${legalMoveSquares.join(", ")}.`
+      : selectedSquare
+        ? `${selectedSquare} selected. No legal moves.`
+        : "";
+
   return (
     <div className="flex touch-manipulation items-start gap-1 select-none">
+      {/* Screen-reader live region for legal move announcements (MED-1) */}
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {legalMovesAnnouncement}
+      </span>
+
       {/* Rank labels left */}
       <div className="flex flex-col" style={{ height: "var(--board-size)" }}>
         {rankLabels.map((r) => (
@@ -80,7 +138,7 @@ export function Board() {
       </div>
 
       <div className="flex flex-col">
-        {/* Grid */}
+        {/* Grid — role="grid" with role="gridcell" children (HIGH-1 fix) */}
         <div
           className="grid overflow-hidden rounded"
           style={GRID_STYLE}
@@ -113,18 +171,39 @@ export function Board() {
             const pieceLabel = piece
               ? `${piece.color === "w" ? "White" : "Black"} ${PIECE_NAMES[piece.type] ?? piece.type}`
               : null;
-            const squareLabel = pieceLabel ? `${sq}: ${pieceLabel}` : sq;
+            // Enrich the label with selection and legal-move context
+            const legalSuffix = isLegal ? (isCapture ? ", capture available" : ", legal move") : "";
+            const selectedSuffix = isSelected ? ", selected" : "";
+            const squareLabel = pieceLabel
+              ? `${sq}: ${pieceLabel}${selectedSuffix}${legalSuffix}`
+              : `${sq}${selectedSuffix}${legalSuffix}`;
+
+            // Roving tabIndex: only the focused/selected square gets 0 (HIGH-2 fix)
+            const isRovingFocused =
+              i === focusedIdxRef.current ||
+              (isSelected && focusedIdxRef.current === 0 && i === squares.indexOf(selectedSquare));
+            const tabIdx = isRovingFocused ? 0 : -1;
 
             return (
               <div
                 key={sq}
+                ref={(el) => {
+                  cellRefs.current[i] = el;
+                }}
                 className={squareClass}
                 style={{ width: "var(--sq-size)", height: "var(--sq-size)" }}
-                onClick={() => selectSquare(sq)}
-                role="button"
+                onClick={() => {
+                  focusedIdxRef.current = i;
+                  selectSquare(sq);
+                }}
+                role="gridcell"
                 aria-label={squareLabel}
-                tabIndex={0}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && selectSquare(sq)}
+                aria-selected={isSelected}
+                tabIndex={tabIdx}
+                onKeyDown={(e) => handleKeyDown(e, i, sq)}
+                onFocus={() => {
+                  focusedIdxRef.current = i;
+                }}
               >
                 {/* hover overlay */}
                 <span

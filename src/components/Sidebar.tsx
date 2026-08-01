@@ -77,9 +77,12 @@ export function Sidebar() {
 
   return (
     <div className="flex w-52.5 min-w-42.5 flex-col gap-3">
-      {/* Captured pieces */}
-      <section className="rounded-lg border border-border bg-surface px-4 pt-3 pb-3">
-        <div className="mb-2 flex items-center justify-between">
+      {/* Captured pieces — MED-2: aria-label makes this a proper landmark */}
+      <section
+        aria-label="Captured pieces"
+        className="rounded-lg border border-border bg-surface px-4 pt-3 pb-3"
+      >
+        <div className="mb-2 flex items-center justify-between" aria-hidden="true">
           <span className="text-xs font-medium text-text-muted">Captured</span>
           {diff !== 0 && (
             <span className="font-mono text-xs font-semibold text-accent">
@@ -87,14 +90,23 @@ export function Sidebar() {
             </span>
           )}
         </div>
-        <div className="flex flex-col gap-2">
+        {/* Visually hidden material summary for screen readers */}
+        <span className="sr-only">
+          {`You captured ${capturedPieces[playerColor].length} piece${capturedPieces[playerColor].length !== 1 ? "s" : ""}. `}
+          {`CPU captured ${capturedPieces[computerColor].length} piece${capturedPieces[computerColor].length !== 1 ? "s" : ""}. `}
+          {diff > 0 ? `You are ahead by ${diff} point${diff !== 1 ? "s" : ""}.` : diff < 0 ? `CPU is ahead by ${Math.abs(diff)} point${Math.abs(diff) !== 1 ? "s" : ""}.` : "Material is even."}
+        </span>
+        <div className="flex flex-col gap-2" aria-hidden="true">
           <CapturedRow pieces={capturedPieces[playerColor]} color={computerColor} label="You" />
           <CapturedRow pieces={capturedPieces[computerColor]} color={playerColor} label="CPU" />
         </div>
       </section>
 
-      {/* Move history */}
-      <section className="flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-surface px-4 pt-3 pb-3">
+      {/* Move history — MED-5: aria-label makes this a proper landmark */}
+      <section
+        aria-label="Move history"
+        className="flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-surface px-4 pt-3 pb-3"
+      >
         <div className="mb-2 flex items-center justify-between">
           <span className="text-xs font-medium text-text-muted">Moves</span>
           {history.length > 0 && (
@@ -106,6 +118,18 @@ export function Sidebar() {
         <div className="flex max-h-95 scrollbar-thin [scrollbar-color:var(--color-border)_transparent] flex-col gap-px overflow-y-auto overscroll-contain">
           {paired.length === 0 && (
             <span className="text-xs text-text-muted opacity-35">No moves yet</span>
+          )}
+          {/* INFO-2: Column headers for move list */}
+          {paired.length > 0 && (
+            <div
+              className="grid items-center px-1 pb-1"
+              style={{ gridTemplateColumns: "24px 1fr 1fr" }}
+              aria-hidden="true"
+            >
+              <span />
+              <span className="px-2 text-xs font-semibold text-text-muted opacity-50">White</span>
+              <span className="px-2 text-xs font-semibold text-text-muted opacity-50">Black</span>
+            </div>
           )}
           {paired.map(([white, black], idx) => (
             <div

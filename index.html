@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#111010" />
+    <!-- INFO-1: theme-color for both colour schemes so the browser chrome matches before JS hydrates -->
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111010" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f0e8" />
+    <!-- LOW-4: page description for shareability / link previews -->
+    <meta name="description" content="Play chess against Minimax or Stockfish, or watch two engines compete." />
     <title>Chess</title>
     <!-- ── Theme init: runs before first paint to prevent flash ── -->
     <script>

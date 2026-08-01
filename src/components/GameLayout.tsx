@@ -14,8 +14,13 @@ interface GameLayoutProps {
 export function GameLayout({ badge }: GameLayoutProps) {
   const router = useRouter();
   const isComputerThinking = useChessStore((s) => s.isComputerThinking);
+  const history = useChessStore((s) => s.history);
+  const status = useChessStore((s) => s.status);
 
   function handleNewGame() {
+    const isOver = status === "checkmate" || status === "stalemate" || status === "draw";
+    // Confirm before discarding an active game (LOW-3)
+    if (!isOver && history.length > 0 && !window.confirm("Abandon current game?")) return;
     void router.navigate({ to: "/" });
   }
 
@@ -30,6 +35,7 @@ export function GameLayout({ badge }: GameLayoutProps) {
         <div className="flex-1" />
         <ThemeToggle />
         <button
+          type="button"
           className="rounded border border-border bg-transparent px-3 py-2 text-xs font-medium text-text-muted transition-[border-color,color,transform] duration-100 hover:border-border-2 hover:text-text active:scale-95"
           onClick={handleNewGame}
           aria-label="Start a new game"

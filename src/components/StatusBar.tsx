@@ -124,12 +124,16 @@ export function StatusBar() {
           )}
           aria-hidden="true"
         />
+        {/*
+          LOW-1: Only use aria-live="assertive" for genuinely urgent interruptions
+          (check/checkmate). All other state changes use "polite".
+        */}
         <span
           className={cn(
             "overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap",
             messageClass[msg.type],
           )}
-          aria-live={msg.type === "danger" || msg.type === "success" ? "assertive" : "polite"}
+          aria-live={msg.type === "danger" ? "assertive" : "polite"}
           aria-atomic="true"
         >
           {msg.text}
@@ -141,12 +145,12 @@ export function StatusBar() {
         </span>
         <span className="hidden h-3 w-px bg-border sm:block" aria-hidden="true" />
         {canUndo && (
-          <button className={btnBase} onClick={undoMove} aria-label="Undo last move">
+          <button type="button" className={btnBase} onClick={undoMove} aria-label="Undo last move">
             Undo
           </button>
         )}
         {gameMode === "computer-vs-computer" && !isOver && (
-          <button className={btnBase} onClick={togglePause} aria-pressed={isPaused}>
+          <button type="button" className={btnBase} onClick={togglePause} aria-pressed={isPaused}>
             {isPaused ? "Resume" : "Pause"}
           </button>
         )}
