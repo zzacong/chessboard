@@ -111,7 +111,7 @@ export function StatusBar() {
   }
 
   const btnBase =
-    "rounded border border-border bg-transparent px-3 py-1.5 text-[11px] font-medium whitespace-nowrap text-text-muted transition-all duration-100 hover:border-border-2 hover:text-text active:scale-[0.97]";
+    "rounded border border-border bg-transparent px-3 py-1.5 text-[11px] font-medium whitespace-nowrap text-text-muted transition-[border-color,color,transform] duration-100 hover:border-border-2 hover:text-text active:scale-[0.97]";
 
   return (
     <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3.5 py-2.5">

@@ -55,7 +55,7 @@ function OptionButton({
   return (
     <button
       className={cn(
-        "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-3 text-center transition-all duration-150",
+        "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-3 text-center transition-[border-color,background-color,color,box-shadow,transform] duration-150",
         selected
           ? "border-accent bg-accent/10 text-text shadow-[0_0_0_1px_var(--color-accent)]"
           : "border-border bg-surface-2 text-text-muted hover:border-border-2 hover:bg-surface-2/80 hover:text-text active:scale-[0.98]",
@@ -131,7 +131,10 @@ function IndexPage() {
   }
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-bg px-4 py-10">
+    <div
+      id="main-content"
+      className="flex min-h-[100dvh] items-center justify-center bg-bg px-4 py-10"
+    >
       <div className="w-full max-w-[420px]">
         {/* Wordmark */}
         <div className="mb-8 text-center">
@@ -275,7 +278,7 @@ function IndexPage() {
           )}
 
           <button
-            className="w-full rounded-lg py-3.5 text-[15px] font-semibold tracking-[0.04em] transition-all duration-150 hover:brightness-105 active:scale-[0.99] active:brightness-95"
+            className="w-full rounded-lg py-3.5 text-[15px] font-semibold tracking-[0.04em] transition-[filter,transform] duration-150 hover:brightness-105 active:scale-[0.99] active:brightness-95"
             style={{
               background: "var(--color-accent)",
               color: "#1a1210",
@@ -283,7 +286,7 @@ function IndexPage() {
             }}
             onClick={handleStart}
           >
-            Play
+            Start Game
           </button>
         </div>
 

@@ -40,7 +40,7 @@ export function GameLayout({ badge }: GameLayoutProps) {
         </span>
         <div className="flex-1" />
         <button
-          className="rounded border border-border bg-transparent px-3 py-1.5 text-[12px] font-medium text-text-muted transition-all duration-100 hover:border-border-2 hover:text-text active:scale-[0.98]"
+          className="rounded border border-border bg-transparent px-3 py-1.5 text-[12px] font-medium text-text-muted transition-[border-color,color,transform] duration-100 hover:border-border-2 hover:text-text active:scale-[0.98]"
           onClick={handleNewGame}
           aria-label="Start a new game"
         >
@@ -48,7 +48,7 @@ export function GameLayout({ badge }: GameLayoutProps) {
         </button>
       </header>
 
-      <main className="flex flex-1 items-start justify-center px-5 pt-6 pb-10">
+      <main id="main-content" className="flex flex-1 items-start justify-center px-5 pt-6 pb-10">
         <div className="flex items-start gap-5 max-sm:w-full max-sm:flex-col max-sm:items-center">
           <div
             className={cn(

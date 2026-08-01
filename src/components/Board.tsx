@@ -9,6 +9,15 @@ import { useChessStore } from "@/store/chessStore";
 
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;
 
+const PIECE_NAMES: Record<string, string> = {
+  k: "King",
+  q: "Queen",
+  r: "Rook",
+  b: "Bishop",
+  n: "Knight",
+  p: "Pawn",
+};
+
 // Static style objects hoisted to module level so they are not recreated on every render.
 const GRID_STYLE: React.CSSProperties = {
   gridTemplateColumns: "repeat(8, var(--sq-size))",
@@ -72,7 +81,12 @@ export function Board() {
 
       <div className="flex flex-col">
         {/* Grid */}
-        <div className="grid overflow-hidden rounded-[3px]" style={GRID_STYLE}>
+        <div
+          className="grid overflow-hidden rounded-[3px]"
+          style={GRID_STYLE}
+          role="grid"
+          aria-label="Chess board"
+        >
           {squares.map((sq, i) => {
             const fileIdx = i % 8;
             const rankIdx = Math.floor(i / 8);
@@ -96,6 +110,11 @@ export function Board() {
               isKingInCheck && "sq-in-check",
             );
 
+            const pieceLabel = piece
+              ? `${piece.color === "w" ? "White" : "Black"} ${PIECE_NAMES[piece.type] ?? piece.type}`
+              : null;
+            const squareLabel = pieceLabel ? `${sq}: ${pieceLabel}` : sq;
+
             return (
               <div
                 key={sq}
@@ -103,7 +122,7 @@ export function Board() {
                 style={{ width: "var(--sq-size)", height: "var(--sq-size)" }}
                 onClick={() => selectSquare(sq)}
                 role="button"
-                aria-label={sq}
+                aria-label={squareLabel}
                 tabIndex={0}
                 onKeyDown={(e) => e.key === "Enter" && selectSquare(sq)}
               >
