@@ -20,23 +20,11 @@ export function GameLayout({ badge }: GameLayoutProps) {
   }
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-bg">
-      <header
-        className="sticky top-0 z-10 flex h-[56px] items-center gap-3 border-b border-border px-5 backdrop-blur-md"
-        style={{ background: "var(--header-bg)" }}
-      >
-        <span className="wordmark text-[20px] text-text" style={{ lineHeight: 1 }}>
-          Chess
-        </span>
-        <span
-          className="h-3.5 w-px shrink-0"
-          style={{ background: "var(--color-border-2)" }}
-          aria-hidden="true"
-        />
-        <span
-          className="rounded px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-[0.08em] text-text-muted"
-          style={{ background: "var(--color-surface-2)" }}
-        >
+    <div className="flex min-h-dvh flex-col bg-bg">
+      <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-(--header-bg) px-5 backdrop-blur-md">
+        <span className="wordmark text-[20px] leading-none text-text">Chess</span>
+        <span className="h-3.5 w-px shrink-0 bg-border-2" aria-hidden="true" />
+        <span className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-[0.08em] text-text-muted">
           {badge}
         </span>
         <div className="flex-1" />

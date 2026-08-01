@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import type { PieceColor, PieceType } from "@/types";
 
 import { getPieceComponent } from "@/components/pieces/lookup";
+import { cn } from "@/lib/cn";
 import { useChessStore } from "@/store/chessStore";
 
 const PIECE_VALUES_DISPLAY: Record<PieceType, number> = {
@@ -43,9 +44,7 @@ function CapturedRow({
           return Comp ? <Comp key={i} size={22} /> : null;
         })}
         {pieces.length === 0 && (
-          <span className="text-[11px] text-text-muted" style={{ opacity: 0.3 }}>
-            none
-          </span>
+          <span className="text-[11px] text-text-muted opacity-30">none</span>
         )}
       </div>
     </div>
@@ -79,16 +78,13 @@ export function Sidebar() {
   const diff = playerScore - computerScore;
 
   return (
-    <div className="flex w-[210px] min-w-[170px] flex-col gap-3">
+    <div className="flex w-52.5 min-w-42.5 flex-col gap-3">
       {/* Captured pieces */}
       <section className="rounded-lg border border-border bg-surface px-3.5 pt-3 pb-3">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-[12px] font-medium text-text-muted">Captured</span>
           {diff !== 0 && (
-            <span
-              className="font-mono text-[11px] font-semibold"
-              style={{ color: "var(--color-accent)" }}
-            >
+            <span className="font-mono text-[11px] font-semibold text-accent">
               {diff > 0 ? `+${diff}` : diff}
             </span>
           )}
@@ -104,52 +100,30 @@ export function Sidebar() {
         <div className="mb-2 flex items-center justify-between">
           <span className="text-[12px] font-medium text-text-muted">Moves</span>
           {history.length > 0 && (
-            <span className="font-mono text-[10px] text-text-muted" style={{ opacity: 0.5 }}>
+            <span className="font-mono text-[10px] text-text-muted opacity-50">
               {Math.ceil(history.length / 2)}
             </span>
           )}
         </div>
-        <div
-          className="flex max-h-[380px] flex-col gap-px overflow-y-auto"
-          style={{
-            scrollbarWidth: "thin",
-            scrollbarColor: "var(--color-border) transparent",
-            overscrollBehavior: "contain",
-          }}
-        >
+        <div className="flex max-h-95 scrollbar-thin [scrollbar-color:var(--color-border)_transparent] flex-col gap-px overflow-y-auto overscroll-contain">
           {paired.length === 0 && (
-            <span className="text-[12px] text-text-muted" style={{ opacity: 0.35 }}>
-              No moves yet
-            </span>
+            <span className="text-[12px] text-text-muted opacity-35">No moves yet</span>
           )}
           {paired.map(([white, black], idx) => (
             <div
               key={idx}
-              className="grid items-center rounded px-1 py-[3px]"
-              style={{
-                gridTemplateColumns: "24px 1fr 1fr",
-                ...(idx === paired.length - 1 && { background: "var(--last-move-bg)" }),
-              }}
+              className={cn(
+                "grid items-center rounded px-1 py-0.75",
+                idx === paired.length - 1 && "bg-(--last-move-bg)",
+              )}
+              style={{ gridTemplateColumns: "24px 1fr 1fr" }}
             >
-              <span
-                className="text-right font-mono text-[10px] text-text-muted"
-                style={{ opacity: 0.5 }}
-              >
+              <span className="text-right font-mono text-[10px] text-text-muted opacity-50">
                 {idx + 1}
               </span>
-              <span
-                className="px-1.5 font-mono text-[12px]"
-                style={{ color: "var(--color-text)", opacity: 0.85 }}
-              >
-                {white}
-              </span>
+              <span className="px-1.5 font-mono text-[12px] text-text opacity-85">{white}</span>
               {black && (
-                <span
-                  className="px-1.5 font-mono text-[12px]"
-                  style={{ color: "var(--color-text-muted)" }}
-                >
-                  {black}
-                </span>
+                <span className="px-1.5 font-mono text-[12px] text-text-muted">{black}</span>
               )}
             </div>
           ))}

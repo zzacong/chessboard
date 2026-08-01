@@ -9,7 +9,7 @@
   --color-border: #332f2c;
   --color-border-2: #4a4440;
   --color-text: #f2ede8;
-  --color-text-muted: #8a7f74;
+  --color-text-muted: #b3a391;
   --color-accent: #c8a05a;
   --color-accent-2: #d4a843;
   --color-success: #5a9e6e;
@@ -68,7 +68,7 @@ html[data-theme="light"] {
   --color-border: #c8b9a4;
   --color-border-2: #b5a18a;
   --color-text: #1a1512;
-  --color-text-muted: #7a6855;
+  --color-text-muted: #5d4f40;
   --color-accent: #b07030;
   --color-accent-2: #a06020;
   --color-success: #3a7d50;

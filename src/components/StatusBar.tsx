@@ -68,18 +68,18 @@ function statusMessage(
     : { text: "Computer's turn", type: "normal" };
 }
 
-const indicatorColor: Record<MsgType, string> = {
-  normal: "var(--color-success)",
-  warning: "var(--color-accent-2)",
-  danger: "var(--color-danger)",
-  success: "var(--color-success)",
+const indicatorClass: Record<MsgType, string> = {
+  normal: "bg-success",
+  warning: "bg-accent-2",
+  danger: "bg-danger",
+  success: "bg-success",
 };
 
-const messageColor: Record<MsgType, string> = {
-  normal: "var(--color-text)",
-  warning: "var(--color-accent-2)",
-  danger: "var(--color-danger)",
-  success: "var(--color-success)",
+const messageClass: Record<MsgType, string> = {
+  normal: "text-text",
+  warning: "text-accent-2",
+  danger: "text-danger",
+  success: "text-success",
 };
 
 export function StatusBar() {
@@ -117,13 +117,18 @@ export function StatusBar() {
     <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3.5 py-2.5">
       <div className="flex min-w-0 items-center gap-2.5">
         <span
-          className={cn("h-1.5 w-1.5 shrink-0 rounded-full", blink && "animate-blink")}
-          style={{ background: indicatorColor[msg.type] }}
+          className={cn(
+            "h-1.5 w-1.5 shrink-0 rounded-full",
+            indicatorClass[msg.type],
+            blink && "animate-blink",
+          )}
           aria-hidden="true"
         />
         <span
-          className="overflow-hidden text-[13px] font-medium text-ellipsis whitespace-nowrap"
-          style={{ color: messageColor[msg.type] }}
+          className={cn(
+            "overflow-hidden text-[13px] font-medium text-ellipsis whitespace-nowrap",
+            messageClass[msg.type],
+          )}
           aria-live={msg.type === "danger" || msg.type === "success" ? "assertive" : "polite"}
           aria-atomic="true"
         >
@@ -131,17 +136,10 @@ export function StatusBar() {
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <span
-          className="hidden text-[10px] whitespace-nowrap text-text-muted sm:block"
-          style={{ opacity: 0.6 }}
-        >
+        <span className="hidden text-[10px] whitespace-nowrap text-text-muted opacity-60 sm:block">
           {modeChip}
         </span>
-        <span
-          className="hidden h-3 w-px sm:block"
-          style={{ background: "var(--color-border)" }}
-          aria-hidden="true"
-        />
+        <span className="hidden h-3 w-px bg-border sm:block" aria-hidden="true" />
         {canUndo && (
           <button className={btnBase} onClick={undoMove} aria-label="Undo last move">
             Undo

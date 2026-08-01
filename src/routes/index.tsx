@@ -66,8 +66,7 @@ function OptionButton({
     >
       {selected && (
         <span
-          className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full"
-          style={{ background: "var(--color-accent)" }}
+          className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-accent"
           aria-hidden="true"
         />
       )}
@@ -105,11 +104,11 @@ function DifficultyPicker({
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-2.5 flex items-center gap-2">
-      <span className="block h-px flex-1" style={{ background: "var(--color-border)" }} />
+      <span className="block h-px flex-1 bg-border" />
       <h2 className="text-[10px] font-semibold tracking-[0.14em] text-text-muted uppercase">
         {children}
       </h2>
-      <span className="block h-px flex-1" style={{ background: "var(--color-border)" }} />
+      <span className="block h-px flex-1 bg-border" />
     </div>
   );
 }
@@ -134,48 +133,30 @@ function IndexPage() {
   return (
     <div
       id="main-content"
-      className="relative flex min-h-[100dvh] items-center justify-center bg-bg px-4 py-10"
+      className="relative flex min-h-dvh items-center justify-center bg-bg px-4 py-10"
     >
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
-      <div className="w-full max-w-[420px]">
+      <div className="w-full max-w-105">
         {/* Wordmark */}
         <div className="mb-8 text-center">
           <div className="mb-3 flex items-center justify-center gap-3">
+            <span className="h-px max-w-15 flex-1 bg-border-2" />
             <span
-              className="h-px max-w-[60px] flex-1"
-              style={{ background: "var(--color-border-2)" }}
-            />
-            <span
-              className="text-[52px] leading-none select-none"
+              className="text-[52px] leading-none text-accent opacity-85 select-none"
               aria-hidden="true"
-              style={{
-                color: "var(--color-accent)",
-                opacity: 0.85,
-              }}
             >
               ♛
             </span>
-            <span
-              className="h-px max-w-[60px] flex-1"
-              style={{ background: "var(--color-border-2)" }}
-            />
+            <span className="h-px max-w-15 flex-1 bg-border-2" />
           </div>
-          <h1 className="wordmark text-[42px] font-normal text-text" style={{ lineHeight: 1 }}>
-            Chess
-          </h1>
+          <h1 className="wordmark text-[42px] leading-none font-normal text-text">Chess</h1>
           <p className="mt-2 text-[13px] tracking-wide text-text-muted">Configure your match</p>
         </div>
 
         {/* Setup card */}
-        <div
-          className="rounded-2xl border border-border bg-surface px-6 py-6"
-          style={{
-            boxShadow:
-              "0 24px 64px var(--shadow-board), 0 2px 8px var(--shadow-board-2), inset 0 1px 0 var(--inset-highlight)",
-          }}
-        >
+        <div className="rounded-2xl border border-border bg-surface px-6 py-6 shadow-[0_24px_64px_var(--shadow-board),0_2px_8px_var(--shadow-board-2),inset_0_1px_0_var(--inset-highlight)]">
           {/* Game Mode */}
           <section className="mb-5">
             <SectionLabel>Mode</SectionLabel>
@@ -224,11 +205,10 @@ function IndexPage() {
                     onClick={() => setColor(c.value)}
                   >
                     <span
-                      className="text-[30px] leading-none"
-                      style={{
-                        color: c.value === "w" ? "var(--color-text)" : "var(--color-text-muted)",
-                        opacity: 0.9,
-                      }}
+                      className={cn(
+                        "text-[30px] leading-none opacity-90",
+                        c.value === "w" ? "text-text" : "text-text-muted",
+                      )}
                     >
                       {c.symbol}
                     </span>
@@ -257,7 +237,7 @@ function IndexPage() {
               <div className="mb-4">
                 <SectionLabel>
                   White{" "}
-                  <span aria-hidden="true" style={{ color: "var(--color-text)", opacity: 0.85 }}>
+                  <span aria-hidden="true" className="text-text opacity-85">
                     ♔
                   </span>
                 </SectionLabel>
@@ -270,7 +250,7 @@ function IndexPage() {
               <div>
                 <SectionLabel>
                   Black{" "}
-                  <span aria-hidden="true" style={{ color: "var(--color-text-muted)" }}>
+                  <span aria-hidden="true" className="text-text-muted">
                     ♚
                   </span>
                 </SectionLabel>
@@ -284,12 +264,7 @@ function IndexPage() {
           )}
 
           <button
-            className="w-full rounded-lg py-3.5 text-[15px] font-semibold tracking-[0.04em] transition-[filter,transform] duration-150 hover:brightness-105 active:scale-[0.99] active:brightness-95"
-            style={{
-              background: "var(--color-accent)",
-              color: "#1a1210",
-              boxShadow: "0 4px 20px rgba(200,160,90,0.25)",
-            }}
+            className="w-full rounded-lg bg-accent py-3.5 text-[15px] font-semibold tracking-[0.04em] text-[#1a1210] shadow-[0_4px_20px_rgba(200,160,90,0.25)] transition-[filter,transform] duration-150 hover:brightness-105 active:scale-[0.99] active:brightness-95"
             onClick={handleStart}
           >
             Start Game
@@ -297,10 +272,7 @@ function IndexPage() {
         </div>
 
         {/* Footer */}
-        <p
-          className="mt-6 text-center text-[11px] tracking-wide text-text-muted"
-          style={{ opacity: 0.45 }}
-        >
+        <p className="mt-6 text-center text-[11px] tracking-wide text-text-muted opacity-45">
           Pawn promotion auto-queened
         </p>
       </div>

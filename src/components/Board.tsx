@@ -65,9 +65,9 @@ export function Board() {
     : ["8", "7", "6", "5", "4", "3", "2", "1"];
 
   return (
-    <div className="flex items-start gap-1 select-none" style={{ touchAction: "manipulation" }}>
+    <div className="flex touch-manipulation items-start gap-1 select-none">
       {/* Rank labels left */}
-      <div className="flex flex-col" style={{ height: "calc(var(--sq-size) * 8)" }}>
+      <div className="flex flex-col" style={{ height: "var(--board-size)" }}>
         {rankLabels.map((r) => (
           <span
             key={r}
@@ -128,14 +128,14 @@ export function Board() {
               >
                 {/* hover overlay */}
                 <span
-                  className="pointer-events-none absolute inset-0 z-[4] opacity-0 group-hover:opacity-100"
+                  className="pointer-events-none absolute inset-0 z-4 opacity-0 group-hover:opacity-100"
                   style={{ background: "var(--hover-overlay)" }}
                 />
 
                 {isLegal && <div className={isCapture ? "legal-ring" : "legal-dot"} />}
                 {PieceComp && (
                   <div
-                    className="pointer-events-none relative z-[2] flex items-center justify-center transition-transform duration-[120ms] ease-out group-hover:scale-[1.08]"
+                    className="pointer-events-none relative z-2 flex items-center justify-center transition-transform duration-120 ease-out group-hover:scale-[1.08]"
                     style={isSelected ? PIECE_WRAPPER_SELECTED : PIECE_WRAPPER_BASE}
                   >
                     <PieceComp size={44} />
@@ -147,7 +147,7 @@ export function Board() {
         </div>
 
         {/* File labels bottom */}
-        <div className="mt-1 flex" style={{ width: "calc(var(--sq-size) * 8)" }}>
+        <div className="mt-1 flex" style={{ width: "var(--board-size)" }}>
           {fileLabels.map((f) => (
             <span
               key={f}
