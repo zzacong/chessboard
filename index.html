@@ -16,7 +16,7 @@
     <!-- ── Theme init: runs before first paint to prevent flash ── -->
     <script>
       (() => {
-        const savedTheme = localStorage.getItem("chess-theme");
+        const savedTheme = localStorage.getItem("theme");
         const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
         const theme =
           savedTheme === "light" || savedTheme === "dark"

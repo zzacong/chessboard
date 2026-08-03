@@ -69,7 +69,7 @@ function parseUciMove(move: string): {
 }
 
 function getInitialTheme(): Theme {
-  const saved = localStorage.getItem("chess-theme") as Theme | null;
+  const saved = localStorage.getItem("theme") as Theme | null;
 
   if (saved === "light" || saved === "dark") {
     return saved;
@@ -144,7 +144,7 @@ const chessStore = createStore<ChessStore>()(
 
       // ── setTheme ────────────────────────────────────────────────────────────
       setTheme: (theme) => {
-        localStorage.setItem("chess-theme", theme);
+        localStorage.setItem("theme", theme);
         set({ theme });
       },
 
