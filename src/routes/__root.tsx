@@ -1,7 +1,10 @@
+import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { useEffect } from "react";
 
 import "../index.css";
+
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { useEffect } from "react";
 
 import { useChessStore } from "@/store/chessStore";
 
@@ -25,17 +28,17 @@ function RootComponent() {
         Skip to content
       </a>
       <Outlet />
-      {/* <TanStackDevtools
+      <TanStackDevtools
         config={{
-          position: 'bottom-right',
+          position: "bottom-right",
         }}
         plugins={[
           {
-            name: 'TanStack Router',
+            name: "TanStack Router",
             render: <TanStackRouterDevtoolsPanel />,
           },
         ]}
-      /> */}
+      />
     </>
   );
 }
